@@ -2,9 +2,9 @@
 session_start();
 include('dbcon.php');
 
-$start = isset($_POST['start']) ? intval($_POST['start']) : 0;
 $length = isset($_POST['length']) ? intval($_POST['length']) : 25;
-$searchValue = $_POST['search']['value'];
+$start = isset($_POST['start']) ? intval($_POST['start']) : 0;
+$searchValue = isset($_POST['search']['value']) ? $_POST['search']['value'] : '';
 
 // Column index to database column name
 $columns = [
@@ -32,7 +32,7 @@ $baseQuery = "FROM entry e LEFT JOIN patrons p ON e.Req_by = p.Sr_no";
 $searchQuery = " WHERE 1=1";
 if (!empty($searchValue)) {
     $searchValue = $conn->real_escape_string($searchValue);
-    $searchQuery = " AND (
+    $searchQuery .= " AND (
         e.Sr_no LIKE '%$searchValue%' OR 
         e.Req_date LIKE '%$searchValue%' OR 
         p.Display_name LIKE '%$searchValue%' OR 
@@ -49,6 +49,25 @@ if (!empty($_POST['date1']) && !empty($_POST['date2'])) {
     $date1 = date('Y-m-d', strtotime($_POST['date1']));
     $date2 = date('Y-m-d', strtotime($_POST['date2']));
     $searchQuery .= " AND e.Req_date BETWEEN '$date1' AND '$date2'";
+}
+
+if (!empty($_POST['statuses']) && is_array($_POST['statuses'])) {
+    $statuses = array_map([$conn, 'real_escape_string'], $_POST['statuses']);
+    $statusList = "'" . implode("','", $statuses) . "'";
+    $searchQuery .= " AND e.Status IN ($statusList)";
+}
+
+if (!empty($_POST['docTypes']) && is_array($_POST['docTypes'])) {
+    $escaped = array_map([$conn, 'real_escape_string'], $_POST['docTypes']);
+    $in = "'" . implode("','", $escaped) . "'";
+    $searchQuery .= " AND e.Document_type IN ($in)";
+}
+
+// Filter: Patron Categories
+if (!empty($_POST['categories']) && is_array($_POST['categories'])) {
+    $escaped = array_map([$conn, 'real_escape_string'], $_POST['categories']);
+    $in = "'" . implode("','", $escaped) . "'";
+    $searchQuery .= " AND e.Category IN ($in)";
 }
 
 // Total records without filtering

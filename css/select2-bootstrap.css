@@ -196,15 +196,6 @@
   border-color: #66afe9;
 }
 
-.select2-container--bootstrap.select2-container--open {
-  /**
-     * Make the dropdown arrow point up while the dropdown is visible.
-     */
-  /**
-     * Handle border radii of the container when the dropdown is showing.
-     */
-}
-
 .select2-container--bootstrap.select2-container--open .select2-selection .select2-selection__arrow b {
   border-color: transparent transparent #999 transparent;
   border-width: 0 4px 4px 4px;
@@ -491,38 +482,14 @@
   margin-top: 10px;
 }
 
-.select2-container--bootstrap .select2-selection.input-lg.select2-container--open .select2-selection--single {
-  /**
-     * Make the dropdown arrow point up while the dropdown is visible.
-     */
-}
-
 .select2-container--bootstrap .select2-selection.input-lg.select2-container--open .select2-selection--single .select2-selection__arrow b {
   border-color: transparent transparent #999 transparent;
   border-width: 0 5px 5px 5px;
 }
 
-.input-group-lg .select2-container--bootstrap .select2-selection.select2-container--open .select2-selection--single {
-  /**
-     * Make the dropdown arrow point up while the dropdown is visible.
-     */
-}
-
 .input-group-lg .select2-container--bootstrap .select2-selection.select2-container--open .select2-selection--single .select2-selection__arrow b {
   border-color: transparent transparent #999 transparent;
   border-width: 0 5px 5px 5px;
-}
-
-.select2-container--bootstrap[dir="rtl"] {
-  /**
-     * Single Select2
-     *
-     * 1. Makes sure that .select2-selection__placeholder is positioned
-     *    correctly.
-     */
-  /**
-     * Multiple Select2
-     */
 }
 
 .select2-container--bootstrap[dir="rtl"] .select2-selection--single {

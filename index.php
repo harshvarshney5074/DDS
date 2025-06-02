@@ -62,6 +62,16 @@
           white-space: normal !important;
           word-wrap: break-word;
         }
+
+        input.form-check-input {
+          border: 2px solid #333;
+          background-color: #fff;
+        }
+
+        input.form-check-input:checked {
+          background-color: #0d6efd; /* Bootstrap primary */
+          border-color: #0d6efd;
+        }
     </style>
 
     <script>
@@ -135,7 +145,119 @@
         <?php } ?>
     </form>
 
-    <div class="tabclass table-responsive">
+    <div class="tabclass table-responsive p-3 rounded shadow-sm">
+        <div class="dropdown mb-3">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Filter
+          </button>
+          <div class="dropdown-menu p-3" style="min-width: 300px;">
+            <!-- Status Filters -->
+            <strong>Status</strong><br>
+            <div class="form-check">
+              <input class="form-check-input status-filter" type="checkbox" value="Pending" id="status-pending">
+              <label class="form-check-label" for="status-pending">Pending</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input status-filter" type="checkbox" value="Approached" id="status-approached">
+              <label class="form-check-label" for="status-approached">Approached</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input status-filter" type="checkbox" value="Received" id="status-received">
+              <label class="form-check-label" for="status-approached">Received</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input status-filter" type="checkbox" value="Complete" id="status-complete">
+              <label class="form-check-label" for="status-approached">Complete</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input status-filter" type="checkbox" value="Closed" id="status-closed">
+              <label class="form-check-label" for="status-approached">Closed</label>
+            </div>
+
+            <hr class="my-2">
+
+            <!-- Document Type Filters -->
+            <strong>Document Type</strong><br>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Journal Article" id="doc-journalarticle">
+              <label class="form-check-label" for="doc-journalarticle">Journal Article</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Conference Paper" id="doc-conferencepaper">
+              <label class="form-check-label" for="doc-conferencepaper">Conference Paper</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Book Chapter" id="doc-bookchapter">
+              <label class="form-check-label" for="doc-bookchapter">Book Chapter</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Standard" id="doc-standard">
+              <label class="form-check-label" for="doc-standard">Standard</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Patent" id="doc-patent">
+              <label class="form-check-label" for="doc-patent">Patent</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Thesis" id="doc-thesis">
+              <label class="form-check-label" for="doc-thesis">Thesis</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Technical Paper" id="doc-technicalpaper">
+              <label class="form-check-label" for="doc-technicalpaper">Technical Paper</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Technical Report" id="doc-technicalreport">
+              <label class="form-check-label" for="doc-technicalreport">Technical Report</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="External" id="doc-external">
+              <label class="form-check-label" for="doc-external">External</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Others" id="doc-others">
+              <label class="form-check-label" for="doc-others">Others</label>
+            </div>
+
+            <hr class="my-2">
+
+            <!-- Patron Category Filters -->
+            <strong>Category</strong><br>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Student" id="cat-student">
+              <label class="form-check-label" for="cat-student">Student</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Faculty" id="cat-faculty">
+              <label class="form-check-label" for="cat-faculty">Faculty</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Other Institution" id="cat-other">
+              <label class="form-check-label" for="cat-other">Other Institution</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Corporate Member" id="cat-corporatemember">
+              <label class="form-check-label" for="cat-corporatemember">Corporate Member</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Other Institute" id="cat-institutemember">
+              <label class="form-check-label" for="cat-institutemember">Institute Member</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Staff" id="cat-staff">
+              <label class="form-check-label" for="cat-staff">Staff</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Individual Membership" id="cat-individual">
+              <label class="form-check-label" for="cat-individual">Individual Membership</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input category-filter" type="checkbox" value="Alumni" id="cat-alumni">
+              <label class="form-check-label" for="cat-alumni">Alumni</label>
+            </div>
+          </div>
+        </div>
+
         <table id="employee_data" class="table table-hover table-striped table-bordered" style="width:100%">
             <thead class="table-info">
                 <tr>
@@ -254,7 +376,7 @@
 
 <!-- Scripts -->
 <script>
-    $(document).ready(function () {
+  $(document).ready(function () {
       var i = 1;
       $(document).on('click', '.view_data', function() {
         var employee_id = $(this).attr("id");
@@ -270,32 +392,35 @@
           });
         }
       });
-    $(document).on('click', '.delete_data', function() {
-        
-      var employee_id = $(this).attr("id");
-      if (employee_id != '') {
-          if(confirm("Are you sure you want to delete this record?")) {
-              $.ajax({
-                  url: 'delete_record.php',
-                  method: 'POST',
-                  data: { employee_id: employee_id },
-                  success: function(response) {
-                      if (response.trim() == 'success') {
-                          alert('Record deleted successfully.');
-                          location.reload(); // reload page or refresh table
-                      } else {
-                          alert('Failed to delete the record.');
-                      }
-                  },
-                  error: function() {
-                      alert('Error connecting to server.');
-                  }
-              });
-          }
-      }
-    });
+    $(document).on('click', '.delete_data', function() { 
+        var employee_id = $(this).attr("id");
+        if (employee_id != '') {
+            if(confirm("Are you sure you want to delete this record?")) {
+                $.ajax({
+                    url: 'delete_record.php',
+                    method: 'POST',
+                    data: { employee_id: employee_id },
+                    success: function(response) {
+                        if (response.trim() == 'success') {
+                            alert('Record deleted successfully.');
+                            location.reload(); // reload page or refresh table
+                        } else {
+                            alert('Failed to delete the record.');
+                        }
+                    },
+                    error: function() {
+                        alert('Error connecting to server.');
+                    }
+                });
+            }
+        }
+      });
 
-    $('#employee_data').DataTable({
+    let selectedStatuses = [];
+    let selectedDocTypes = [];
+    let selectedCategories = [];
+
+    const table = $('#employee_data').DataTable({
       "scrollX": true,
       "processing": true,
       "serverSide": true,
@@ -306,11 +431,14 @@
                 // Add date filters to AJAX request
                 d.date1 = $('#date1').val();
                 d.date2 = $('#date2').val();
+                d.statuses = selectedStatuses;
+                d.docTypes = selectedDocTypes;
+                d.categories = selectedCategories;
             }
       },
       "stateSave": true,
-      "pageLength": 25,
-      dom: 'Bfrtip',
+      "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
+      dom: 'Bflrtip',
       buttons: [
             'excelHtml5',
             'csvHtml5',
@@ -330,6 +458,34 @@
             { "data": 10 } // Download
       ]
     });
+
+    function updateFilters() {
+      selectedStatuses = $('.status-filter:checked').map(function () {
+        return this.value;
+      }).get();
+
+      selectedDocTypes = $('.doc-type-filter:checked').map(function () {
+        return this.value;
+      }).get();
+
+      selectedCategories = $('.category-filter:checked').map(function () {
+        return this.value;
+      }).get();
+
+      table.ajax.reload(); // Reload DataTable with updated filters
+    }
+
+    $('.status-filter, .doc-type-filter, .category-filter').on('change', updateFilters);
+
+    $('.status-checkbox').on('change', function () {
+      selectedStatuses = $('.status-checkbox:checked').map(function () {
+        return $(this).val();
+      }).get();
+
+      table.ajax.reload();
+    });
+
+    $('#employee_data_length select').addClass('form-select');
 
     // Reload DataTable when the form is submitted
     $('#dateFilterForm').on('submit', function (e) {
