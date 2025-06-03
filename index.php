@@ -136,16 +136,9 @@
 <div class="container mt-5 pt-5">
     <h1 class="text-center mb-4">List of Articles</h1>
 
-    <form method="post" action="institute_mail3.php" id="mail_form">
-        <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1') { ?>
-            <div class="mb-3 text-end">
-                <input type="submit" value="Mail" class="btn btn-success" name="mail" />
-                <button type="button" name="add" id="add" data-bs-toggle="modal" data-bs-target="#add_data_Modal" class="btn btn-warning">Add</button>
-            </div>
-        <?php } ?>
-    </form>
 
     <div class="tabclass table-responsive p-3 rounded shadow-sm">
+        
         <div class="dropdown mb-3">
           <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             Filter
@@ -185,6 +178,10 @@
             <div class="form-check">
               <input class="form-check-input doc-type-filter" type="checkbox" value="Conference Paper" id="doc-conferencepaper">
               <label class="form-check-label" for="doc-conferencepaper">Conference Paper</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input doc-type-filter" type="checkbox" value="Book" id="doc-book">
+              <label class="form-check-label" for="doc-book">Book</label>
             </div>
             <div class="form-check">
               <input class="form-check-input doc-type-filter" type="checkbox" value="Book Chapter" id="doc-bookchapter">
@@ -257,25 +254,33 @@
             </div>
           </div>
         </div>
-
-        <table id="employee_data" class="table table-hover table-striped table-bordered" style="width:100%">
-            <thead class="table-info">
-                <tr>
-                    <th>Mail</th>
-                    <th>ID</th>
-                    <th>Date</th>
-                    <th>Patron</th>
-                    <th>Category</th>
-                    <th>Bibliographic Details</th>
-                    <th>Journal Name</th>
-                    <th>Document Type</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                    <th><i class="fa fa-download fa-lg" aria-hidden="true"></i></th>
-                </tr>
-            </thead>
-            <tbody></tbody> <!-- DataTables will populate this -->
-        </table>
+        <button type="button" name="add" id="add" data-bs-toggle="modal" data-bs-target="#add_data_Modal" class="btn btn-warning mb-2">Add</button>
+        <form method="POST" action="institute_mail3.php" id="entryMailForm">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <div>
+              <button type="submit" name="mail" class="btn btn-primary">Add to Mail</button>
+              <span id="selectedCount" class="ms-2 text-muted">(0 entries selected)</span>
+            </div>
+          </div>
+          <table id="employee_data" class="table table-hover table-striped table-bordered" style="width:100%">
+              <thead class="table-info">
+                  <tr>
+                      <th>Mail</th>
+                      <th>ID</th>
+                      <th>Date</th>
+                      <th>Patron</th>
+                      <th>Category</th>
+                      <th>Bibliographic Details</th>
+                      <th>Journal Name</th>
+                      <th>Document Type</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                      <th><i class="fa fa-download fa-lg" aria-hidden="true"></i></th>
+                  </tr>
+              </thead>
+              <tbody></tbody> <!-- DataTables will populate this -->
+          </table>
+        </form>
     </div>
 </div>
 </body>
@@ -377,6 +382,27 @@
 <!-- Scripts -->
 <script>
   $(document).ready(function () {
+      function updateSelectedCount() {
+        const count = $('.entry-checkbox:checked').length;
+        $('#selectedCount').text(`(${count} entr${count === 1 ? 'y' : 'ies'} selected)`);
+      }
+
+      $(document).on('change', '.entry-checkbox', function() {
+        updateSelectedCount();
+        
+        // If not all are checked, uncheck master checkbox
+        if (!this.checked) {
+          $('#selectAll').prop('checked', false);
+        } else if ($('.entry-checkbox').length === $('.entry-checkbox:checked').length) {
+          $('#selectAll').prop('checked', true);
+        }
+      });
+
+      // Run on table redraw (DataTables pagination/search)
+      $('#entry_data').on('draw.dt', function() {
+        updateSelectedCount();
+        $('#selectAll').prop('checked', false); // Reset master checkbox
+      });
       var i = 1;
       $(document).on('click', '.view_data', function() {
         var employee_id = $(this).attr("id");

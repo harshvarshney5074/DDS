@@ -91,7 +91,7 @@ $dataResult = mysqli_query($conn, $dataQuery);
 $data = [];
 while ($row = mysqli_fetch_assoc($dataResult)) {
     $subArray = [];
-    $subArray[] = '<i class="fa fa-envelope"></i>';
+    $subArray[] = '<input type="checkbox" class="entry-checkbox" name="send[]" value="' . $row['Sr_no'] . '">';
     $subArray[] = $row['Sr_no'];
     $subArray[] = $row['Req_date'];
     $subArray[] = $row['Display_name'] ?? '';

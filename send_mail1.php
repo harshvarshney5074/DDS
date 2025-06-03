@@ -6,8 +6,8 @@ require 'config.php';
 if (isset($_POST['send_inst'])) {
     // Sanitize and fetch input values
     $body = trim($_POST['Body']);
-    $Cc = filter_var(trim($_POST['Cc']), FILTER_SANITIZE_EMAIL);
-    $Bcc = filter_var(trim($_POST['Bcc']), FILTER_SANITIZE_EMAIL);
+    $Cc = array_map('trim', explode(',', $_POST['Cc'] ?? ''));
+	$Bcc = array_map('trim', explode(',', $_POST['Bcc'] ?? ''));
     $sub = htmlspecialchars(trim($_POST['sub']));
     $institutes = $_POST["framework1"] ?? [];
 
@@ -69,12 +69,27 @@ function sendEmail($email, $body, $Cc, $Bcc, $sub) {
     $mail->setFrom(SMTP_USER, 'Document Delivery Service');
     $mail->addAddress($email);
 
-    if (!empty($Cc)) {
-        $mail->addCC($Cc);
-    }
-    if (!empty($Bcc)) {
-        $mail->addBCC($Bcc);
-    }
+	// CC handling
+	if (!empty($_POST['Cc'])) {
+		$ccs = explode(',', $_POST['Cc']);
+		foreach ($ccs as $cc) {
+			$cc = trim($cc);
+			if (filter_var($cc, FILTER_VALIDATE_EMAIL)) {
+				$mail->addCC($cc);
+			}
+		}
+	}
+
+	// BCC handling
+	if (!empty($_POST['Bcc'])) {
+		$bccs = explode(',', $_POST['Bcc']);
+		foreach ($bccs as $bcc) {
+			$bcc = trim($bcc);
+			if (filter_var($bcc, FILTER_VALIDATE_EMAIL)) {
+				$mail->addBCC($bcc);
+			}
+		}
+	}
 
     $mail->isHTML(true);
     $mail->Subject = $sub;

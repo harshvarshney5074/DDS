@@ -25,7 +25,6 @@
     });
   </script>
 
-
   <style>
     input[type=text], select, textarea {
         width: 100%;
@@ -112,7 +111,7 @@ if (isset($_POST['mail'])) {
       </div>
 
       <label for="sub">Subject:</label>
-      <input type="text" class="form-control" id="sub" name="sub">
+      <input type="text" class="form-control" id="sub" name="sub" value="Request for Documents">
 
       <label for="Body">Body:</label>
       <textarea name="Body" id="tinymce-body" class="form-control" rows="15"><?php echo $body; ?></textarea>
@@ -143,6 +142,23 @@ if (isset($_POST['mail'])) {
         maxItemCount: 100
       });
     }
+    // For Cc
+    new Choices('#Cc', {
+      delimiter: ',',
+      editItems: true,
+      removeItemButton: true,
+      placeholderValue: 'Add Cc recipient(s)',
+      duplicateItemsAllowed: false
+    });
+
+    // For Bcc
+    new Choices('#Bcc', {
+      delimiter: ',',
+      editItems: true,
+      removeItemButton: true,
+      placeholderValue: 'Add Bcc recipient(s)',
+      duplicateItemsAllowed: false
+    });
   });
 </script>
 </body>
