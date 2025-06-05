@@ -39,10 +39,6 @@
     <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
 
-    <!-- Bootstrap Datepicker CSS + JS (not officially BS5, but keeping your version) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-
     <style>
         body {
             background-image: url("image/bg3.jpg");
@@ -73,17 +69,6 @@
           border-color: #0d6efd;
         }
     </style>
-
-    <script>
-        $(document).ready(function () {
-            // Initialize datepickers for all inputs with name date1, date2, req_date
-            $('input[name="date1"], input[name="date2"], input[name="req_date"]').datepicker({
-                format: 'yyyy/mm/dd',
-                todayHighlight: true,
-                autoclose: true
-            });
-        });
-    </script>
 </head>
 
 <body>
@@ -117,8 +102,8 @@
                 </ul>
 
                 <form id="dateFilterForm" class="d-flex align-items-center" role="search">
-                    <input type="text" name="date1" id="date1" placeholder="YYYY/MM/DD" class="form-control me-2" required />
-                    <input type="text" name="date2" id="date2" placeholder="YYYY/MM/DD" class="form-control me-2" required />
+                    <input type="date" name="date1" id="date1" class="form-control me-2" required />
+                    <input type="date" name="date2" id="date2" class="form-control me-2" required />
                     <button type="submit" class="btn btn-secondary me-3">
                         <i class="fas fa-search"></i>
                     </button>
@@ -313,7 +298,7 @@
       <div class="modal-body">
         <form method="post" id="insert_form">
           <label for="req_date">Date</label>
-          <input type="text" class="form-control" id="req_date" name="req_date" placeholder="Request Date (YYYY/MM/DD)" required>
+          <input type="date" name="req_date" id="req_date" class="form-control me-2" placeholder="Enter date" required />
 
           <label for="req_by" class="mt-3">Patron</label>
           <input type="text" name="req_by" id="req_by" class="form-control" autocomplete="off" placeholder="Request By" required>

@@ -6,11 +6,13 @@ include('../checkUser.php');
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Master List of Journals</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>DDS - Journals</title>
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
+
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -36,11 +38,11 @@ include('../checkUser.php');
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] == '0') echo '<li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>'; ?>
       </ul>
-      <ul class="navbar-nav">
-        <?php if (isset($_SESSION['uid'])) {
-          echo "<li class='nav-item'><a class='nav-link'>User {$_SESSION['uid']}</a></li>";
-          echo "<li class='nav-item'><a class='nav-link' href='../logout.php'>Logout</a></li>";
-        } ?>
+      <ul class="navbar-nav ms-auto">
+        <?php if (isset($_SESSION['uid'])): ?>
+          <li class="nav-item"><a class="nav-link">User <?= $_SESSION['uid'] ?></a></li>
+          <li class="nav-item"><a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <?php endif; ?>
       </ul>
     </div>
   </div>
@@ -52,7 +54,7 @@ include('../checkUser.php');
     <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#add_data_Modal">Add</button>
   </div>
   <table id="employee_data" class="table table-striped" style="width:100%">
-    <thead>
+    <thead class="table-dark">
       <tr>
         <th>Journal Name</th>
         <th>Print ISSN</th>

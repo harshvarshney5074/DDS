@@ -1,172 +1,140 @@
 <?php
+include("dbcon.php");
+session_start();
 
-	include("dbcon.php");
-	session_start();
-	if(isset($_GET['edit_record'])){
-		$get_id=$_GET['edit_record'];
-		$query="select * from patrons where Sr_no='$get_id'";
-		$get_pro=mysqli_query($conn,$query);
-		
-		while($row_pro=mysqli_fetch_array($get_pro)){
-			$id=$row_pro['Sr_no'];
-			$roll_no=$row_pro['Roll_no'];
-			$display_name=$row_pro['Display_name'];
-			$email_id=$row_pro['Email_id'];
-			$discipline=$row_pro['Discipline'];
-			$program_name=$row_pro['Program_name'];
-			$status=$row_pro['Status'];
-			
-			
-		}  
-	 
-	}
-?>
-<!DOCTYPE html>
-<html>
- <head>
-  <title>DDS</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>  
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" />
- 
- 
-<?php
-  function trim_input($data) {
-  $data = trim($data);
-  $data = stripslashes($data);
-  $data = htmlspecialchars($data);
-  return $data;
+if (isset($_GET['edit_record'])) {
+  $get_id = $_GET['edit_record'];
+  $query = "SELECT * FROM patrons WHERE Sr_no='$get_id'";
+  $get_pro = mysqli_query($conn, $query);
+  $row_pro = mysqli_fetch_assoc($get_pro);
+
+  $id = $row_pro['Sr_no'];
+  $roll_no = $row_pro['Roll_no'];
+  $display_name = $row_pro['Display_name'];
+  $email_id = $row_pro['Email_id'];
+  $discipline = $row_pro['Discipline'];
+  $program_name = $row_pro['Program_name'];
+  $status = $row_pro['Status'];
+}
+
+function trim_input($data) {
+  return htmlspecialchars(stripslashes(trim($data)));
 }
 ?>
-
-
-
- 
- </head>
- <body>
- <nav class="navbar navbar-inverse navbar-fixed-top">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Patron | DDS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="../index.php">IITGN</a>
+    <a class="navbar-brand" href="../index.php">IITGN</a>
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Manage</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
+            <li><a class="dropdown-item" href="../journal/index.php">Journals</a></li>
+            <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="../biblo_search1.php">Search</a></li>
+        <li class="nav-item"><a class="nav-link" href="../orders.php">Orders</a></li>
+        <?php endif; ?>
+        <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
+        <?php if ($_SESSION['type'] === '0'): ?>
+        <li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>
+        <?php endif; ?>
+      </ul>
+      <ul class="navbar-nav ms-auto">
+        <?php if (isset($_SESSION['uid'])): ?>
+        <li class="nav-item"><a class="nav-link">User <?= $_SESSION['uid'] ?></a></li>
+        <li class="nav-item"><a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <?php endif; ?>
+      </ul>
     </div>
-    <ul class="nav navbar-nav ">
-      
-	  <?php 
-	   if($_SESSION['type']=='0' || $_SESSION['type']=='1' ){
-		   ?>
-      		<li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage
-        <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-			<li><a href="../institutions/index.php">Institutions</a></li>
-          
-          <li><a href="../journal/index.php">Journals</a></li>
-		  <li><a href="../patrons/index.php">Patrons</a></li>
-		  
-          
-        </ul>
-      </li>
-	  <li><a href="../biblo_search1.php">Search</a></li>
-	  <li><a href="../orders.php">Orders</a></li>
-	   <?php } ?>
-	  <li><a href="../reports/index.php">Reports</a></li>
-      <?php
-		if($_SESSION['type']=='0'){
-			echo"<li><a href='../users/index.php'>Settings</a></li>";
-		}
-
-	  ?>
-    </ul>
-   
-       <ul class="nav navbar-nav navbar-right">
-      <?php
-	  if(isset($_SESSION['uid'])){
-	  echo "<li><a href='#'>User ".$_SESSION['uid']."</a></li>";
-      echo"<li><a href='../logout.php'><span class='glyphicon glyphicon-log-in'></span> Logout</a></li>";
-	  }
-	  ?>
-    </ul>
-      </div>
-   
   </div>
 </nav>
 
- <script>
+<div class="container mt-5 pt-4" style="max-width: 700px;">
+  <h2 class="mt-4 mb-3 text-center">Edit Patron</h2>
+
+  <form method="post" name="inst_form" onsubmit="return validateForm();">
+    <div class="mb-3">
+      <label for="roll_no" class="form-label">Roll No</label>
+      <input type="text" class="form-control" id="roll_no" name="roll_no" value="<?= $roll_no ?>" required>
+    </div>
+    <div class="mb-3">
+      <label for="display_name" class="form-label">Display Name</label>
+      <input type="text" class="form-control" id="display_name" name="display_name" value="<?= $display_name ?>" required>
+    </div>
+    <div class="mb-3">
+      <label for="email_id" class="form-label">Email Id</label>
+      <input type="email" class="form-control" id="email_id" name="email_id" value="<?= $email_id ?>" required>
+    </div>
+    <div class="mb-3">
+      <label for="discipline" class="form-label">Discipline</label>
+      <input type="text" class="form-control" id="discipline" name="discipline" value="<?= $discipline ?>" required>
+    </div>
+    <div class="mb-3">
+      <label for="program_name" class="form-label">Program Name</label>
+      <input type="text" class="form-control" id="program_name" name="program_name" value="<?= $program_name ?>" required>
+    </div>
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      <select class="form-select" name="status" id="status">
+        <option selected value="<?= $status ?>"><?= $status ?></option>
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+      </select>
+    </div>
+    <button type="submit" name="update" class="btn btn-primary">Update</button>
+    <a href="index.php" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<script>
 function validateForm() {
-    var x = document.forms["inst_form"]["email_id"].value;
-    var atpos = x.indexOf("@");
-    var dotpos = x.lastIndexOf(".");
-    if (atpos<1 || dotpos<atpos+2 || dotpos+2>=x.length) {
-        alert("Not a valid e-mail address");
-        return false;
-    }
+  const email = document.forms["inst_form"]["email_id"].value;
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!re.test(email)) {
+    alert("Please enter a valid email address.");
+    return false;
+  }
+  return true;
 }
-</script> 
-  <br /><br />
-  <div class="container" style="width:600px;">
-	<h1>Edit Record</h1>
+</script>
 
-   <form method="post" name="inst_form" action="" onsubmit="return validateForm();">
-    <div class="form-group">
-	
-		<label  for="inputPassword">Roll No</label>
-		
-		<input type="text" id="inputPassword" name="roll_no" value="<?php echo $roll_no; ?>" placeholder="Institute Name"class="form-control" >
-		
-		<label  for="inputPassword">Display Name</label>
-		
-		<input type="text" id="inputPassword" name="display_name" value="<?php echo $display_name; ?>" placeholder="Email" class="form-control" >
-		
-		<label  for="inputPassword">Email Id</label>
-		
-		<input type="text" id="inputPassword" name="email_id" value="<?php echo $email_id; ?>" placeholder="Address" class="form-control" >
-		
-		<label  for="inputPassword">Discipline</label>
-		
-		<input type="text" id="inputPassword" name="discipline" value="<?php echo $discipline; ?>" placeholder="Address" class="form-control" >
-		
-		<label  for="inputPassword">Program Name</label>
-		
-		<input type="text" id="inputPassword" name="program_name" value="<?php echo $program_name; ?>" placeholder="Address" class="form-control" >
-		
-		<label>Status</label>
-	 <select name="status" class="form-control">
-		<option value="<?php echo $status; ?>"><?php echo $status; ?></option>
-		<option value="Active">Active</option>
-		<option value="Inactive">Inactive</option>
-	 </select>
-		
-      
-    </div>
-    <div class="form-group">
-     <input type="submit" class="btn btn-info" name="update" value="Update" />
-    </div>
-   </form>
-   <br />
-  </div>
- </body>
-</html>
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
+  $roll_no = trim_input($_POST['roll_no']);
+  $display_name = trim_input($_POST['display_name']);
+  $email_id = trim_input($_POST['email_id']);
+  $discipline = trim_input($_POST['discipline']);
+  $program_name = trim_input($_POST['program_name']);
+  $status = $_POST['status'];
 
-<?php 
+  $update_record = mysqli_query($conn, "UPDATE patrons 
+    SET Roll_no='$roll_no', Display_name='$display_name', Email_id='$email_id', 
+        Discipline='$discipline', Program_name='$program_name', Status='$status' 
+    WHERE Sr_no='$get_id'");
 
-	if(isset($_POST['update'])){
-		
-		$roll_no=trim_input($_POST['roll_no']);
-		$display_name=trim_input($_POST['display_name']);
-		$email_id=$_POST['email_id'];
-		$discipline=$_POST['discipline'];
-		$program_name=$_POST['program_name'];
-		$status=$_POST['status'];
-		
-		$update_record=mysqli_query($conn,"update patrons set Roll_no='$roll_no',Display_name='$display_name',Email_id='$email_id',Discipline='$discipline',Program_name='$program_name',Status='$status' where Sr_no='$get_id'");
-		
-		if($update_record){
-		echo"<script>alert('Data updated successfully')</script>";
-		echo"<script>window.open('index.php','_self')</script>";
-	}
-
-	}
+  if ($update_record) {
+    echo "<script>alert('Data updated successfully'); window.location.href='index.php';</script>";
+  } else {
+    echo "<script>alert('Update failed.');</script>";
+  }
+}
 ?>
+</body>
+</html>

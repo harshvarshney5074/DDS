@@ -1,21 +1,14 @@
-  <?php  
- if(isset($_POST["institute_id"]))  
- {  
-        
-      include('dbcon.php'); 
-	  $id=$_POST["institute_id"];
-      
-    ?>    
-      <div class="table-responsive">  
-           <table class="table table-bordered">  
-				<p> Are you sure you want to delete?</p>
-				
-				<a href="delete_record.php?delete_record=<?php echo $id; ?>" class="btn btn-danger" role="button">Delete</a>
-           </table>  
-      </div>  
- <?php       
-       
- }  
-?>
- 
+<?php
+include("../dbcon.php");
 
+if (isset($_POST['id'])) {
+  $id = intval($_POST['id']);
+  $query = "DELETE FROM patrons WHERE Sr_no = $id";
+  $result = mysqli_query($conn, $query);
+
+  echo json_encode([
+    "status" => $result ? "success" : "error",
+    "message" => $result ? "Patron deleted." : "Deletion failed."
+  ]);
+}
+?>

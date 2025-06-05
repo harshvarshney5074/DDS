@@ -1,5 +1,4 @@
 <?php
-//fetch.php
 include('dbcon.php');
 $request = mysqli_real_escape_string($conn, $_POST["query"]);
 $query = "

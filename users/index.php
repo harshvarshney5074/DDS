@@ -75,7 +75,7 @@ $result = mysqli_query($conn, $query);
 
   <div id="employee_table">
     <table id="employee_data" class="table table-bordered table-hover">
-      <thead class="table-light">
+      <thead class="table-dark">
         <tr>
           <th>Username</th>
           <th>Usertype</th>

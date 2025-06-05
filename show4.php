@@ -1,109 +1,124 @@
-<html>  
- <head>  
-  <title>DDS</title>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-		   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
-           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />  
-           
-		    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>  
-           <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>            
-           <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />  
-
-	<style>
-	.table{
-		width:50%;
-	}
-	
-	
-	</style>
- </head> 
- <body>  
 <?php
-require('PHPMailer-master/PHPMailerAutoload.php');
-include('dbcon.php');
-include('head1.php');
-if(isset($_POST['send1'])){
-		$order_no=$_POST['order_no'];
-		$to=$_POST['To'];
-		$cc=$_POST['Cc'];
-		$bcc=$_POST['Bcc'];
-		$sub=$_POST['sub'];
-		$body=$_POST['Body'];	
-$m=new PHPMailer;
-$m->isSMTP();
+session_start();
+include("dbcon.php");
+include("config.php");
 
-$m->SMTPOptions = array(
-    'ssl' => array(
-        'verify_peer' => false,
-        'verify_peer_name' => false,
-        'allow_self_signed' => true
-    )
-);                                     // Set mailer to use SMTP
+// Load Composer's autoloader
+require 'vendor/autoload.php';
 
-$m->SMTPAuth=true;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
+if (isset($_POST['send1'])) {
 
-$m->Host='smtp.gmail.com';
-$m->Username='libraryservices@iitgn.ac.in';
-$m->Password='IITGN@321';
-$m->SMTPSecure='tls';
-$m->Port=587;
-$m->From='libraryservices@iitgn.ac.in';
-$m->FromName='Library Services';
-//$m->addReplyTo('jagritibajpai2606@gmail.com','Reply Address');
+    $mail = new PHPMailer(true);
 
-		
-$m->addAddress($to,'');
-$m->addCC($cc,'');
-$m->addBCC($bcc,'');
-$m->isHTML(true);
-$m->Body=$body;
-$count=0;
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';    // Your SMTP server
+        $mail->SMTPAuth   = true;
+        $mail->Username   = SMTP_USER;            // SMTP username from config.php
+        $mail->Password   = SMTP_PASS;            // SMTP password from config.php
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
 
-$get_attach=mysqli_query($conn,"select * from attachments");
-while($row=mysqli_fetch_array($get_attach)){
-	$file_path=$row['File_path'];
-	$file_name=$row['File_name'];
-	$maxsize=24*1024*1024;
-	if(filesize($file_name)>$maxsize){
-		$count++;
-	}
-	
-	
-	$m->addAttachment($file_path,$file_name);
+        // From address and name
+        $mail->setFrom(SMTP_USER, 'Library Services');
+
+        // To address
+        $to = trim($_POST['To']);
+        if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("Invalid To email address.");
+        }
+        $mail->addAddress($to);
+
+        // Cc addresses
+        if (!empty($_POST['Cc'])) {
+            $ccs = explode(',', $_POST['Cc']);
+            foreach ($ccs as $cc) {
+                $cc = trim($cc);
+                if (filter_var($cc, FILTER_VALIDATE_EMAIL)) {
+                    $mail->addCC($cc);
+                }
+            }
+        }
+
+        // Bcc addresses
+        if (!empty($_POST['Bcc'])) {
+            $bccs = explode(',', $_POST['Bcc']);
+            foreach ($bccs as $bcc) {
+                $bcc = trim($bcc);
+                if (filter_var($bcc, FILTER_VALIDATE_EMAIL)) {
+                    $mail->addBCC($bcc);
+                }
+            }
+        }
+
+        // Subject and body
+        $mail->Subject = $_POST['sub'] ?? '(No Subject)';
+        $mail->isHTML(true);
+        $mail->Body = $_POST['Body'] ?? '';
+
+        // Attachments from attachments table
+        $result = mysqli_query($conn, "SELECT * FROM attachments");
+        while ($row = mysqli_fetch_assoc($result)) {
+            $filePath = $row['File_path'];
+            $fileName = $row['File_name'];
+
+            if (file_exists($filePath)) {
+                $mail->addAttachment($filePath, $fileName);
+            } else {
+                error_log("Attachment file not found: $filePath");
+            }
+        }
+
+        // Send the email
+        $mail->send();
+
+        // Clear attachments table after sending
+        mysqli_query($conn, "TRUNCATE TABLE attachments");
+
+        // Success HTML
+        ?>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Send Mail - Success</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+        </head>
+        <body>
+          <div class="container mt-5">
+            <h2 class="text-success">Mail sent successfully!</h2>
+            <a href="orders.php" class="btn btn-primary">Go to Orders</a>
+          </div>
+        </body>
+        </html>
+        <?php
+    } catch (Exception $e) {
+        // Failure HTML
+        ?>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <title>Send Mail - Error</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+        </head>
+        <body>
+          <div class="container mt-5">
+            <h2 class="text-danger">Mail sending failed!</h2>
+            <p><strong>Error:</strong> <?= htmlspecialchars($mail->ErrorInfo) ?></p>
+            <a href="show3.php" class="btn btn-secondary">Back</a>
+          </div>
+        </body>
+        </html>
+        <?php
+    }
+} else {
+    // If the form wasn't submitted properly
+    header("Location: show.php");
+    exit;
 }
-
-
-
-$m->Subject=$sub;
-
-if($count>0){
-	echo"<script>alert('File size greater than 25 MB');</script>";
-	echo"<script>window.open('orders.php','_self');</script>";
-	
-}
-
-else{
-if($m->send()){
-	$get_status=mysqli_query($conn,"select * from attachments");
-	while($fet1=mysqli_fetch_array($get_status)){
-		$send_id=$fet1['Send_id'];
-		$update=mysqli_query($conn,"update entry set Status='Complete',Sent_date=now() where Sr_no='$send_id' and Status='Received'");
-		
-	}
-	$count=mysqli_query($conn,"select * from entry where order_id='$order_no' and (Status='Pending' or Status='Approached')");
-	$count1=mysqli_num_rows($count);
-	if($count1>=1)
-		$sent=mysqli_query($conn,"update orders set sent='2' where order_id='$order_no'" );
-	else
-		$sent=mysqli_query($conn,"update orders set sent='1' where order_id='$order_no'" );
-
-	echo"<script>alert('Mail sent successfully $order_no');</script>";
-	echo"<script>window.open('orders.php','_self');</script>";
-}
-else{
-	echo $m->ErrorInfo;
-}
-}
-}
+?>

@@ -1,189 +1,158 @@
 <?php  
-//index.php
+// index.php
 session_start();
 include('dbcon.php');
 include('checkUser.php');
 
-$query="SELECT 
-        * 
-    FROM 
-        orders
-    WHERE 
-		sent!=1 
-	AND
-        MONTH(date) = MONTH(CURRENT_DATE) 
-    AND 
-        YEAR(date) = YEAR(CURRENT_DATE)"; 
+$query = "SELECT * FROM orders
+          WHERE sent != 1 
+            AND MONTH(date) = MONTH(CURRENT_DATE) 
+            AND YEAR(date) = YEAR(CURRENT_DATE)";
+
 $result = mysqli_query($conn, $query);
- ?>  
-<!DOCTYPE html> 
-<?php 
 
-?> 
-<html>  
- <head>  
-  <title>DDS</title>  
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-		   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
-           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />  
-           
-		    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>  
-           <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>            
-           <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" /> 
-						<!-- Include Date Range Picker -->
-			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+// Date filter
+if (isset($_POST['date_submit'])) {
+    $ab = $_POST['date1'];
+    $cd = $_POST['date2'];
+    $stmt = $conn->prepare("SELECT * FROM orders WHERE date BETWEEN ? AND ?");
+    $stmt->bind_param("ss", $ab, $cd);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $stmt->close();
+}
+?>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DDS - Library Orders</title>
 
-			<script>
-	$(document).ready(function(){
-		var date_input=$('input[name="date1"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-		var date_input=$('input[name="date2"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-		var date_input=$('input[name="req_date"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-	})
-</script>
-	
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
- </head> 
- <nav class="navbar navbar-inverse navbar-fixed-top">
+  <!-- Font Awesome 6 -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- jQuery 3.6.4 -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+  <!-- Bootstrap 5 Bundle JS (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- DataTables with Bootstrap 5 styling -->
+  <link href="https://cdn.datatables.net/1.13.5/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+
+</head>
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="index.php">IITGN</a>
+    <a class="navbar-brand" href="index.php">IITGN</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" 
+      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1'): ?>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Manage
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="manageDropdown">
+              <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
+              <li><a class="dropdown-item" href="journal/index.php">Journals</a></li>
+              <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="biblo_search1.php">Search</a></li>
+          <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+        <?php endif; ?>
+        <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
+        <?php if ($_SESSION['type'] == '0'): ?>
+          <li class="nav-item"><a class="nav-link" href="users/index.php">Settings</a></li>
+        <?php endif; ?>
+      </ul>
+
+      <form method="post" class="d-flex align-items-center" role="search" style="gap:0.5rem;">
+        <input type="date" name="date1" class="form-control form-control-sm" required />
+        <input type="date" name="date2" class="form-control form-control-sm" required />
+        <button type="submit" name="date_submit" class="btn btn-outline-light btn-sm" title="Filter by date range">
+          <i class="fas fa-filter"></i>
+        </button>
+      </form>
+
+      <ul class="navbar-nav ms-3">
+        <?php if (isset($_SESSION['uid'])): ?>
+          <li class="nav-item"><a class="nav-link disabled">User <?php echo htmlspecialchars($_SESSION['uid']); ?></a></li>
+          <li class="nav-item"><a class="nav-link" href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <?php endif; ?>
+      </ul>
     </div>
-    <ul class="nav navbar-nav ">
-      
-	  <?php 
-	   if($_SESSION['type']=='0' || $_SESSION['type']=='1' ){
-		   ?>
-      		<li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage
-        <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-			<li><a href="institutions/index.php">Institutions</a></li>
-          
-          <li><a href="journal/index.php">Journals</a></li>
-		  <li><a href="patrons/index.php">Patrons</a></li>
-		  
-          
-        </ul>
-      </li>
-	  <li><a href="biblo_search1.php">Search</a></li>
-	  <li><a href="orders.php">Orders</a></li>
-	   <?php } ?>
-	  <li><a href="reports/index.php">Reports</a></li>
-      <?php
-		if($_SESSION['type']=='0'){
-			echo"<li><a href='users/index.php'>Settings</a></li>";
-		}
-
-	  ?>
-    </ul>
-    <form method="post" action="" class="navbar-form navbar-right">
-      
-        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD"class="form-control" required>
-        <input type="text" id="date" name="date2" placeholder="YYYY/MM/DD"class="form-control" required>
-
-		
-          <button type="submit" name="date_submit" class="btn btn-default">
-            <i class="glyphicon glyphicon-search"></i>
-          </button>
-       <ul class="nav navbar-nav navbar-right">
-      <?php
-	  if(isset($_SESSION['uid'])){
-	  echo "<li><a href='#'>User ".$_SESSION['uid']."</a></li>";
-      echo"<li><a href='logout.php'><span class='glyphicon glyphicon-log-in'></span> Logout</a></li>";
-	  }
-	  ?>
-    </ul>
-      </div>
-    </form>
   </div>
 </nav>
-<?php 
-	if(isset($_POST['date_submit'])){
-					$ab=$_POST['date1'];
-					$cd=$_POST['date2'];
-					$result=mysqli_query($conn,"select * from orders where date between '$ab' and '$cd' ");
-				}
-				
-?>
- <body>  
 
- <br/>
-  <br /><br />  
-  <div class="container" style="width:900px;">  
-   <h3 align="center">List of Basket</h3>  
-   <br />  
-   <div class="table-responsive">
-   
-    <br />
-    <div id="employee_table">
-     <table id="employee_data" class="table table-hover table-striped table-bordered"> 
-	<thead>
-      <tr>
-       <th>Basket Number</th> 
-		<th>Date</th> 	   
-       <th>Username</th>
-	   <th>Patron Name</th>
-	   <th>Status</th>
-	   <th>View</th>
-      </tr>
-	  </thead>
-      <?php
-      while($row = mysqli_fetch_array($result))
-      {
-      ?>
-      <tr>
-		
-       <td><?php echo $row["order_id"]; ?></td>
-	   <td><?php echo $row["date"]; ?></td>
-       <td><?php echo $row["username"]; ?></td>
-	    <td><?php echo $row["Display_name"]; ?></td>
-	   <td>
-	   <?php if($row["sent"]==0)
-		   echo "Incomplete";
-			else if($row["sent"]==1)
-				echo"Complete";
-			else
-				echo "Partially Complete";?>
-		</td>
-	   <td><a href="show.php?order_no=<?php echo $row["order_id"]; ?>" class="btn btn-info btn-xs " />Show</a></td>
-	   </tr>
-      <?php
-      }
-      ?>
-     </table>
-    </div>
-   </div>  
+<!-- Main container -->
+<div class="container" style="margin-top: 80px; max-width: 900px;">
+  <h3 class="text-center mb-4">List of Basket</h3>
+
+  <div class="table-responsive bg-white p-3 rounded shadow-sm">
+    <table id="employee_data" class="table table-hover table-striped table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Basket Number</th>
+          <th>Date</th>
+          <th>Username</th>
+          <th>Patron Name</th>
+          <th>Status</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <tr>
+          <td><?php echo htmlspecialchars($row["order_id"]); ?></td>
+          <td><?php echo htmlspecialchars($row["date"]); ?></td>
+          <td><?php echo htmlspecialchars($row["username"]); ?></td>
+          <td><?php echo htmlspecialchars($row["Display_name"]); ?></td>
+          <td>
+            <?php 
+              if ($row["sent"] == 0) echo "Incomplete"; 
+              else if ($row["sent"] == 1) echo "Complete"; 
+              else echo "Partially Complete"; 
+            ?>
+          </td>
+          <td>
+            <a href="show.php?order_no=<?php echo urlencode($row["order_id"]); ?>" 
+               class="btn btn-info btn-sm" role="button" aria-label="View order details">
+              Show
+            </a>
+          </td>
+        </tr>
+        <?php endwhile; ?>
+      </tbody>
+    </table>
   </div>
- </body>  
-</html>  
+</div>
+
 <script>
-$(document).ready(function(){  
-      $('#employee_data').DataTable({
-			"stateSave":true,
-			"aaSorting": [[0, 'desc']],
-} );	  
+$(document).ready(function() {
+    $('#employee_data').DataTable({
+        stateSave: true,
+        order: [[0, 'desc']],
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        language: {
+          searchPlaceholder: "Search baskets..."
+        }
+    });
 });
 </script>
+
+</body>
+</html>

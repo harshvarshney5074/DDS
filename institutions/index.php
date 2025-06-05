@@ -79,7 +79,7 @@ $result = mysqli_query($conn, $query);
     <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
   </div>
   <table id="employee_data" class="table table-bordered table-striped">
-    <thead>
+    <thead class="table-dark">
       <tr>
         <th>Institution Name</th>
         <th>Email</th>

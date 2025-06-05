@@ -33,17 +33,17 @@
 	  $journal_name=$_POST["journal_name"];
       if($_POST["employee_id"] != '')  
       {  
-           $query = "  
-           UPDATE entry   
-           SET Req_date='$req_date',   
-           Req_by='$req_by',   
-           Category='$category',   
-           Bibliographic_details = '$biblio_det',   
-           Journal_name = '$journal_name',
-		   Status='$status'
-           WHERE id='".$_POST["employee_id"]."'";  
-           $message = 'Data Updated';  
-      }  
+          $query = "  
+          UPDATE entry   
+          SET Req_date='$req_date',   
+          Req_by='$req_by',   
+          Category='$category',   
+          Bibliographic_details = '$biblio_det',   
+          Journal_name = '$journal_name',
+          Status='$status'
+          WHERE id='".$_POST["employee_id"]."'";  
+          $message = 'Data Updated';  
+      }   
       else  
       {  
 			$number = count($_POST["name"]);

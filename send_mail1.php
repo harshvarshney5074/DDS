@@ -1,5 +1,8 @@
 <?php
-require 'PHPMailer-master/PHPMailerAutoload.php';
+require 'vendor/autoload.php'; // Use Composer's autoloader
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 include("dbcon.php");
 require 'config.php';
 
@@ -7,7 +10,7 @@ if (isset($_POST['send_inst'])) {
     // Sanitize and fetch input values
     $body = trim($_POST['Body']);
     $Cc = array_map('trim', explode(',', $_POST['Cc'] ?? ''));
-	$Bcc = array_map('trim', explode(',', $_POST['Bcc'] ?? ''));
+    $Bcc = array_map('trim', explode(',', $_POST['Bcc'] ?? ''));
     $sub = htmlspecialchars(trim($_POST['sub']));
     $institutes = $_POST["framework1"] ?? [];
 
@@ -50,52 +53,50 @@ if (isset($_POST['send_inst'])) {
 
 // Send Email Function
 function sendEmail($email, $body, $Cc, $Bcc, $sub) {
-    $mail = new PHPMailer;
-    $mail->isSMTP();
-    $mail->SMTPOptions = [
-        'ssl' => [
-            'verify_peer' => false,
-            'verify_peer_name' => false,
-            'allow_self_signed' => true
-        ]
-    ];
-    $mail->Host = 'smtp.gmail.com';
-    $mail->SMTPAuth = true;
-    $mail->Username = SMTP_USER;
-    $mail->Password = SMTP_PASS;
-    $mail->SMTPSecure = 'tls';
-    $mail->Port = 587;
+    $mail = new PHPMailer(true);
 
-    $mail->setFrom(SMTP_USER, 'Document Delivery Service');
-    $mail->addAddress($email);
+    try {
+        // SMTP settings
+        $mail->isSMTP();
+        $mail->SMTPOptions = [
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            ]
+        ];
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = SMTP_USER;
+        $mail->Password = SMTP_PASS;
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
 
-	// CC handling
-	if (!empty($_POST['Cc'])) {
-		$ccs = explode(',', $_POST['Cc']);
-		foreach ($ccs as $cc) {
-			$cc = trim($cc);
-			if (filter_var($cc, FILTER_VALIDATE_EMAIL)) {
-				$mail->addCC($cc);
-			}
-		}
-	}
+        // Sender and recipient
+        $mail->setFrom(SMTP_USER, 'Document Delivery Service');
+        $mail->addAddress($email);
 
-	// BCC handling
-	if (!empty($_POST['Bcc'])) {
-		$bccs = explode(',', $_POST['Bcc']);
-		foreach ($bccs as $bcc) {
-			$bcc = trim($bcc);
-			if (filter_var($bcc, FILTER_VALIDATE_EMAIL)) {
-				$mail->addBCC($bcc);
-			}
-		}
-	}
+        // CC
+        foreach ($Cc as $cc) {
+            if (filter_var($cc, FILTER_VALIDATE_EMAIL)) {
+                $mail->addCC($cc);
+            }
+        }
 
-    $mail->isHTML(true);
-    $mail->Subject = $sub;
-    $mail->Body = $body;
+        // BCC
+        foreach ($Bcc as $bcc) {
+            if (filter_var($bcc, FILTER_VALIDATE_EMAIL)) {
+                $mail->addBCC($bcc);
+            }
+        }
 
-    if (!$mail->send()) {
+        // Email content
+        $mail->isHTML(true);
+        $mail->Subject = $sub;
+        $mail->Body = $body;
+
+        $mail->send();
+    } catch (Exception $e) {
         file_put_contents('mail_errors.log', date('Y-m-d H:i:s') . ' - ' . $email . ' - ' . $mail->ErrorInfo . "\n", FILE_APPEND);
     }
 }

@@ -1,22 +1,29 @@
 <?php
 include('dbcon.php');
- if(!empty($_POST)){
-	$inst=$_POST['institute_name'];
-	$email=$_POST['email'];
-	$add=$_POST['address'];
-	$check=mysqli_query($conn,"select * from institutions where institute_name='$inst'");
-	$count=mysqli_num_rows($check);
-	if($count>=1){
-		echo"<script>alert('This entry already exists.')</script>";
-	}
-	
-	else{
-	$sql=mysqli_query($conn,"insert into institutions (institute_name,email,address) value ('$inst','$email','$add')");
-	if($sql){
-		echo"<script>alert('Successfully inserted')</script>";
-		echo"<script>window.open('index.php','_self')</script>";
-	}
-	}
+
+$response = ['success' => false, 'message' => ''];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $roll_no = $_POST['roll_no'];
+    $display_name = $_POST['display_name'];
+    $email_id = $_POST['email_id'];
+    $discipline = $_POST['discipline'];
+    $program_name = $_POST['program_name'];
+    $status = $_POST['status'];
+
+    $check = mysqli_query($conn, "SELECT * FROM patrons WHERE Email_id='$email_id'");
+    if (mysqli_num_rows($check) > 0) {
+        $response['message'] = 'This entry already exists.';
+    } else {
+        $sql = mysqli_query($conn, "INSERT INTO patrons (Roll_no, Display_name, Email_id, Discipline, Program_name, Status)
+            VALUES ('$roll_no','$display_name','$email_id','$discipline','$program_name','$status')");
+        if ($sql) {
+            $response['success'] = true;
+            $response['message'] = 'Successfully inserted';
+        } else {
+            $response['message'] = 'Database error during insert';
+        }
+    }
 }
 
-?>
+echo json_encode($response);
