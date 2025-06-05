@@ -17,7 +17,14 @@ include("dbcon.php");
   <!-- TinyMCE -->
   <script src="https://cdn.tiny.cloud/1/qp8d4fz8gld9sydga5ch53yhhve7v7y2jpf0f4ko1zanlvk2/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
   <script>
-    tinymce.init({ selector: 'textarea' });
+    tinymce.init({
+      selector: 'textarea',
+      height: 500,
+      menubar: true,
+      plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table wordcount',
+      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
+      branding: false
+    });
   </script>
 
   <style>
