@@ -180,16 +180,21 @@ if (!empty($_POST)) {
   include('dbcon.php');
   $uname = $_POST['user_name'];
   $utype = $_POST['user_type'];
-  $password = md5($_POST['password']);
+  $plainPassword = $_POST['password'];
+
+  // Secure password hash
+  $hashedPassword = password_hash($plainPassword, PASSWORD_DEFAULT);
 
   $check = mysqli_query($conn, "SELECT * FROM user WHERE username='$uname'");
   if (mysqli_num_rows($check) > 0) {
     echo "<script>alert('This username already exists.')</script>";
   } else {
-    $sql = mysqli_query($conn, "INSERT INTO user (username,user_type,password) VALUES ('$uname','$utype','$password')");
+    $sql = mysqli_query($conn, "INSERT INTO user (username, user_type, password) VALUES ('$uname', '$utype', '$hashedPassword')");
     if ($sql) {
       echo "<script>alert('Successfully added')</script>";
       echo "<script>window.open('index.php','_self')</script>";
+    } else {
+      echo "<script>alert('Error occurred during insertion')</script>";
     }
   }
 }

@@ -23,21 +23,23 @@ if (isset($_POST['update'])) {
     $pass = $_POST['pass'];
     $con_pass = $_POST['con_pass'];
 
-    if ($pass == "") {
+    if ($pass === "") {
+        // Only update user type
         $update_record = mysqli_query($conn, "UPDATE user SET user_type='$utype' WHERE user_id='$get_id'");
         if ($update_record) {
             echo "<script>alert('Data updated successfully')</script>";
             echo "<script>window.location.href = 'index.php';</script>";
         }
-    } elseif ($pass == $con_pass) {
-        $pass1 = md5($pass);
-        $update_record = mysqli_query($conn, "UPDATE user SET user_type='$utype', password='$pass1' WHERE user_id='$get_id'");
+    } elseif ($pass === $con_pass) {
+        // Update user type and securely hashed password
+        $hashedPassword = password_hash($pass, PASSWORD_DEFAULT);
+        $update_record = mysqli_query($conn, "UPDATE user SET user_type='$utype', password='$hashedPassword' WHERE user_id='$get_id'");
         if ($update_record) {
-            echo "<script>alert('Data updated successfully')</script>";
+            echo "<script>alert('Password and user type updated successfully')</script>";
             echo "<script>window.location.href = 'index.php';</script>";
         }
     } else {
-        echo "<script>alert('Password and Confirm password are not the same')</script>";
+        echo "<script>alert('Password and Confirm Password do not match')</script>";
     }
 }
 ?>

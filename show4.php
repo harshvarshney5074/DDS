@@ -75,6 +75,13 @@ if (isset($_POST['send1'])) {
 
         // Send the email
         $mail->send();
+		if (isset($_POST['order_no'])) {
+			$order_id = intval($_POST['order_no']);
+			$update = mysqli_prepare($conn, "UPDATE orders SET sent = 1 WHERE order_id = ?");
+			mysqli_stmt_bind_param($update, "i", $order_id);
+			mysqli_stmt_execute($update);
+			mysqli_stmt_close($update);
+		}
 
         // Clear attachments table after sending
         mysqli_query($conn, "TRUNCATE TABLE attachments");

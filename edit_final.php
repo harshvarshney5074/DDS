@@ -102,6 +102,20 @@ if (isset($_POST['update'])) {
 
     $update_sql .= " WHERE Sr_no='$eid'";
 
+    if (!empty($_POST['received_from'])) {
+        $received_from = intval($_POST['received_from']);
+
+        // Check if an entry already exists
+        $check_existing = mysqli_query($conn, "SELECT * FROM receive_list WHERE entry_id='$eid'");
+        if (mysqli_num_rows($check_existing) > 0) {
+            // Update existing
+            mysqli_query($conn, "UPDATE receive_list SET institute_name='$received_from' WHERE entry_id='$eid'");
+        } else {
+            // Insert new
+            mysqli_query($conn, "INSERT INTO receive_list (institute_name, entry_id, req_date) VALUES ('$received_from', '$eid', '$req_date')");
+        }
+    }
+
     if (mysqli_query($conn, $update_sql)) {
         echo '<div class="alert alert-success mt-3">Record updated successfully!</div>';
     } else {
@@ -347,6 +361,29 @@ if (isset($_POST['update'])) {
             <label for="file" class="form-label">File (PDF/Doc)</label>
             <input type="file" id="fil" name="fil" class="form-control" disabled />
         </div>
+
+        <div class="mb-3">
+            <label for="received_from" class="form-label">Received From</label>
+            <select name="received_from" id="received_from" class="form-select">
+                <option value="">-- Select Institute --</option>
+                <?php
+                $institutes_result = mysqli_query($conn, "SELECT i.Sr_no, i.institute_name 
+                    FROM institutions i
+                    INNER JOIN institute_list il ON i.Sr_no = il.institute_name 
+                    WHERE il.entry_id = '$get_id'");
+                while ($inst = mysqli_fetch_assoc($institutes_result)) {
+                    $selected = '';
+                    // Optional: Pre-select if already set
+                    $existing = mysqli_query($conn, "SELECT * FROM receive_list WHERE entry_id = '$get_id' AND institute_name = '" . $inst['Sr_no'] . "'");
+                    if (mysqli_num_rows($existing)) {
+                        $selected = 'selected';
+                    }
+                    echo '<option value="' . htmlspecialchars($inst['Sr_no']) . '" ' . $selected . '>' . htmlspecialchars($inst['institute_name']) . '</option>';
+                }
+                ?>
+            </select>
+        </div>
+
 
         <input type="hidden" name="eid" value="<?php echo htmlspecialchars($id); ?>" />
         <input type="submit" class="btn btn-primary" name="update" value="Update Record" />

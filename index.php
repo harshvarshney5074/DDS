@@ -239,11 +239,12 @@
             </div>
           </div>
         </div>
-        <button type="button" name="add" id="add" data-bs-toggle="modal" data-bs-target="#add_data_Modal" class="btn btn-warning mb-2">Add</button>
+        <button type="button" name="add" id="add" data-bs-toggle="modal" data-bs-target="#add_data_Modal" class="btn btn-warning mb-2">Add Entry</button>
         <form method="POST" action="institute_mail3.php" id="entryMailForm">
           <div class="d-flex align-items-center justify-content-between mb-2">
             <div>
-              <button type="submit" name="mail" class="btn btn-primary">Add to Mail</button>
+              <button type="submit" name="mail" class="btn btn-primary" id="addToMailBtn">Add to Mail</button>
+              <button type="button" class="btn btn-danger ms-2" id="removeAllBtn">Remove All</button>
               <span id="selectedCount" class="ms-2 text-muted">(0 entries selected)</span>
             </div>
           </div>
@@ -368,26 +369,32 @@
 <script>
   $(document).ready(function () {
       function updateSelectedCount() {
-        const count = $('.entry-checkbox:checked').length;
-        $('#selectedCount').text(`(${count} entr${count === 1 ? 'y' : 'ies'} selected)`);
+      const count = $('.entry-checkbox:checked').length;
+      $('#selectedCount').text(`(${count} entr${count === 1 ? 'y' : 'ies'} selected)`);
+      $('#addToMailBtn').prop('disabled', count === 0);
+    }
+
+      $(document).on('change', '.entry-checkbox', function () {
+      updateSelectedCount();
+
+      // Master checkbox sync
+      if (!this.checked) {
+        $('#selectAll').prop('checked', false);
+      } else if ($('.entry-checkbox').length === $('.entry-checkbox:checked').length) {
+        $('#selectAll').prop('checked', true);
       }
-
-      $(document).on('change', '.entry-checkbox', function() {
-        updateSelectedCount();
-        
-        // If not all are checked, uncheck master checkbox
-        if (!this.checked) {
-          $('#selectAll').prop('checked', false);
-        } else if ($('.entry-checkbox').length === $('.entry-checkbox:checked').length) {
-          $('#selectAll').prop('checked', true);
-        }
-      });
-
+    });
       // Run on table redraw (DataTables pagination/search)
-      $('#entry_data').on('draw.dt', function() {
-        updateSelectedCount();
-        $('#selectAll').prop('checked', false); // Reset master checkbox
-      });
+      $('#entry_data').on('draw.dt', function () {
+      updateSelectedCount();
+      $('#selectAll').prop('checked', false);
+    });
+      $('#removeAllBtn').click(function () {
+      $('.entry-checkbox').prop('checked', false);
+      $('#selectAll').prop('checked', false);
+      updateSelectedCount();
+    });
+    updateSelectedCount();  
       var i = 1;
       $(document).on('click', '.view_data', function() {
         var employee_id = $(this).attr("id");

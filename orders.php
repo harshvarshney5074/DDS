@@ -115,26 +115,51 @@ if (isset($_POST['date_submit'])) {
       </thead>
       <tbody>
         <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <?php
+          // Get total and complete entries for this order
+          $order_id = $row['order_id'];
+          $entry_q = $conn->prepare("SELECT Status FROM entry WHERE Order_id = ?");
+          $entry_q->bind_param("s", $order_id);
+          $entry_q->execute();
+          $entry_result = $entry_q->get_result();
+
+          $total = 0;
+          $complete = 0;
+
+          while ($entry = $entry_result->fetch_assoc()) {
+              if (in_array($entry['Status'], ['Pending', 'Approached', 'Received', 'Complete', 'Closed'])) {
+                  $total++;
+                  if ($entry['Status'] === 'Complete') $complete++;
+              }
+          }
+
+          $entry_q->close();
+
+          // Determine status
+          if ($complete === 0) {
+              $status = "Incomplete";
+          } elseif ($complete < $total) {
+              $status = "Partially Complete";
+          } else {
+              $status = "Complete";
+          }
+
+          // Show row only if at least one entry is Pending, Approached, or Received
+          if ($total > 0 && $complete < $total || $status === "Complete") {
+        ?>
         <tr>
-          <td><?php echo htmlspecialchars($row["order_id"]); ?></td>
-          <td><?php echo htmlspecialchars($row["date"]); ?></td>
-          <td><?php echo htmlspecialchars($row["username"]); ?></td>
-          <td><?php echo htmlspecialchars($row["Display_name"]); ?></td>
+          <td><?= htmlspecialchars($row["order_id"]) ?></td>
+          <td><?= htmlspecialchars($row["date"]) ?></td>
+          <td><?= htmlspecialchars($row["username"]) ?></td>
+          <td><?= htmlspecialchars($row["Display_name"]) ?></td>
+          <td><?= $status ?></td>
           <td>
-            <?php 
-              if ($row["sent"] == 0) echo "Incomplete"; 
-              else if ($row["sent"] == 1) echo "Complete"; 
-              else echo "Partially Complete"; 
-            ?>
-          </td>
-          <td>
-            <a href="show.php?order_no=<?php echo urlencode($row["order_id"]); ?>" 
-               class="btn btn-info btn-sm" role="button" aria-label="View order details">
-              Show
-            </a>
+            <a href="show.php?order_no=<?= urlencode($row["order_id"]) ?>" class="btn btn-info btn-sm">Show</a>
           </td>
         </tr>
-        <?php endwhile; ?>
+        <?php } ?>
+      <?php endwhile; ?>
+
       </tbody>
     </table>
   </div>
