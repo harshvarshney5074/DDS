@@ -2,19 +2,7 @@
 session_start();
 include('checkUser.php');
 include('dbcon.php');
-     if(isset($_POST['date_submit'])){
-          $ab=$_POST['date1'];
-          $cd=$_POST['date2'];
-          $result=mysqli_query($conn,"select * from entry where Req_date between '$ab' and '$cd' ");
-     }
-	if(!isset($_POST['date_submit'])){
-	     if(isset($_GET['get_date1'])){
-               $ab=$_GET['get_date1'];
-               $cd=$_GET['get_date2'];
-               $result=mysqli_query($conn,"select * from entry where Req_date between '$ab' and '$cd' ");
-					
-	     }
-     }
+     
 ?>
 
  <!DOCTYPE html>  
