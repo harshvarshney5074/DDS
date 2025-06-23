@@ -48,7 +48,9 @@ function trim_input($data) {
         <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
         <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Manage</a>
+          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+            Manage
+          </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
             <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
