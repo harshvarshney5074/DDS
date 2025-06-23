@@ -11,6 +11,7 @@ if (isset($_GET['edit_record'])) {
         $id = $row_pro['Sr_no'];
         $inst = $row_pro['institute_name'];
         $email = $row_pro['email'];
+        $phone = $row_pro['phone_no'];
         $add = $row_pro['address'];
         $status = $row_pro['Status'];
         $remarks = $row_pro['Remarks'];
@@ -37,6 +38,7 @@ function trim_input($data) {
     <style>
         body {
             padding-top: 70px;
+            background-color: lightblue;
         }
     </style>
 
@@ -56,7 +58,7 @@ function trim_input($data) {
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="../index.php">IITGN</a>
+        <a class="navbar-brand" href="../home.php">Home</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -64,20 +66,20 @@ function trim_input($data) {
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
+                    <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-                            <li><a class="dropdown-item" href="../journal/index.php">Journals</a></li>
+                            <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
                             <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="../biblo_search1.php">Search</a></li>
-                    <li class="nav-item"><a class="nav-link" href="../orders.php">Orders</a></li>
+                <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
                 <?php endif; ?>
                 <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
                 <?php if ($_SESSION['type'] === '0'): ?>
-                    <li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
                 <?php endif; ?>
             </ul>
             <ul class="navbar-nav ms-auto">
@@ -102,6 +104,11 @@ function trim_input($data) {
         <div class="mb-3">
             <label for="email" class="form-label">Email Address</label>
             <input type="email" class="form-control" id="email" name="email" value="<?= $email ?>" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="phone_no" class="form-label">Phone no.</label>
+            <input type="tel" class="form-control" id="phone_no" name="phone_no" value="<?= $phone ?>" >
         </div>
 
         <div class="mb-3">
@@ -136,11 +143,12 @@ function trim_input($data) {
 if (isset($_POST['update'])) {
     $inst1 = trim_input($_POST['institute_name']);
     $email = trim_input($_POST['email']);
+    $phone = trim_input($_POST['phone_no']);
     $add = trim_input($_POST['address']);
     $status = $_POST['status'];
     $remarks = trim_input($_POST['remarks']);
 
-    $update_record = mysqli_query($conn, "UPDATE institutions SET institute_name='$inst1', email='$email', address='$add', Status='$status', Remarks='$remarks' WHERE Sr_no='$get_id'");
+    $update_record = mysqli_query($conn, "UPDATE institutions SET institute_name='$inst1', email='$email', phone_no='$phone', address='$add', Status='$status', Remarks='$remarks' WHERE Sr_no='$get_id'");
 
     if ($update_record) {
         echo "<script>alert('Data updated successfully'); window.location.href='index.php';</script>";

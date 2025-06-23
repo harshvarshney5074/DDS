@@ -83,6 +83,18 @@ if (isset($_POST['send1'])) {
 			mysqli_stmt_close($update);
 		}
 
+        if (!empty($_POST['entry_ids'])) {
+            $entryIdsRaw = $_POST['entry_ids'];
+            $entryIds = array_filter(array_map('intval', explode(',', $entryIdsRaw)));
+
+            if (!empty($entryIds)) {
+                $idsList = implode(',', $entryIds); // e.g., "23,25,29"
+                $today = date('Y-m-d');
+                $updateSentDate = "UPDATE entry SET Sent_date = '$today' WHERE Sr_no IN ($idsList)";
+                mysqli_query($conn, $updateSentDate);
+            }
+        }
+
         // Clear attachments table after sending
         mysqli_query($conn, "TRUNCATE TABLE attachments");
 

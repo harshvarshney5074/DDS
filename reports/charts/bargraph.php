@@ -1,404 +1,464 @@
 <?php 
 include('dbcon.php');
-include('head.php');
+session_start();
 
-
-	if(isset($_POST['user_submit'])){
-		$date1=$_POST['date1'];
-		$date2=$_POST['date2'];
-		$r1=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Req_date between '$date1' and '$date2'");
-$r2=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Pending' and Req_date between '$date1' and '$date2'");
-$r3=mysqli_query($conn,"select Sr_no from entry where Category='Student' and Status='Approached' and Req_date between '$date1' and '$date2'");
-$r4=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Complete' and Req_date between '$date1' and '$date2'");
-$r5=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Closed' and Req_date between '$date1' and '$date2'");
-$R1=mysqli_num_rows($r1);
-$R2=mysqli_num_rows($r2);
-$R3=mysqli_num_rows($r3);
-$R4=mysqli_num_rows($r4);
-$R5=mysqli_num_rows($r5);
-/* faculty */
-$s1=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Req_date between '$date1' and '$date2'");
-$s2=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Pending' and Req_date between '$date1' and '$date2'");
-$s3=mysqli_query($conn,"select Sr_no from entry where Category='Faculty' and Status='Approached' and Req_date between '$date1' and '$date2'");
-$s4=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Complete' and Req_date between '$date1' and '$date2'");
-$s5=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Closed' and Req_date between '$date1' and '$date2'");
-$S1=mysqli_num_rows($s1);
-$S2=mysqli_num_rows($s2);
-$S3=mysqli_num_rows($s3);
-$S4=mysqli_num_rows($s4);
-$S5=mysqli_num_rows($s5);
-/* other institutions */
-$t1=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Req_date between '$date1' and '$date2'");
-$t2=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Pending' and Req_date between '$date1' and '$date2'");
-$t3=mysqli_query($conn,"select Sr_no from entry where Category='Other Institutions' and Status='Approached'and Req_date between '$date1' and '$date2'");
-$t4=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Complete'and Req_date between '$date1' and '$date2'");
-$t5=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Closed'and Req_date between '$date1' and '$date2'");
-$T1=mysqli_num_rows($t1);
-$T2=mysqli_num_rows($t2);
-$T3=mysqli_num_rows($t3);
-$T4=mysqli_num_rows($t4);
-$T5=mysqli_num_rows($t5);
-/* Corporate Members */
-$u1=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members'and Req_date between '$date1' and '$date2'");
-$u2=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Pending'and Req_date between '$date1' and '$date2'");
-$u3=mysqli_query($conn,"select Sr_no from entry where Category='Corporate Members' and Status='Approached' and Req_date between '$date1' and '$date2'");
-$u4=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Complete'and Req_date between '$date1' and '$date2'");
-$u5=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Closed'and Req_date between '$date1' and '$date2'");
-$U1=mysqli_num_rows($u1);
-$U2=mysqli_num_rows($u2);
-$U3=mysqli_num_rows($u3);
-$U4=mysqli_num_rows($u4);
-$U5=mysqli_num_rows($u5);
-/* Institution members */
-$v1=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members'and Req_date between '$date1' and '$date2'");
-$v2=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Pending'and Req_date between '$date1' and '$date2'");
-$v3=mysqli_query($conn,"select Sr_no from entry where Category='Institute Members' and Status='Approached'and Req_date between '$date1' and '$date2'");
-$v4=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Complete'and Req_date between '$date1' and '$date2'");
-$v5=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Closed'and Req_date between '$date1' and '$date2'");
-$V1=mysqli_num_rows($v1);
-$V2=mysqli_num_rows($v2);
-$V3=mysqli_num_rows($v3);
-$V4=mysqli_num_rows($v4);
-$V5=mysqli_num_rows($v5);
-
-	
-	
-$query1=mysqli_query($conn,"select Status from entry where Status='Pending' and Req_date between '$date1' and '$date2'");
-$count1=mysqli_num_rows($query1);
-$query2=mysqli_query($conn,"select Sr_no from entry where Status='Approached' and Req_date between '$date1' and '$date2'");
-$count2=mysqli_num_rows($query2);
-$query3=mysqli_query($conn,"select Sr_no from entry where Status='Complete'  and Req_date between '$date1' and '$date2'");
-$count3=mysqli_num_rows($query3);
-$query4=mysqli_query($conn,"select Sr_no from entry where Status='Closed' and Req_date between '$date1' and '$date2'");
-$count4=mysqli_num_rows($query4);	
-	
-	
-	}
-
-else{
-
-$r1=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r2=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r3=mysqli_query($conn,"select Sr_no from entry where Category='Student' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r4=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r5=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$R1=mysqli_num_rows($r1);
-$R2=mysqli_num_rows($r2);
-$R3=mysqli_num_rows($r3);
-$R4=mysqli_num_rows($r4);
-$R5=mysqli_num_rows($r5);
-/* faculty */
-$s1=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s2=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s3=mysqli_query($conn,"select Sr_no from entry where Category='Faculty' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s4=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s5=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$S1=mysqli_num_rows($s1);
-$S2=mysqli_num_rows($s2);
-$S3=mysqli_num_rows($s3);
-$S4=mysqli_num_rows($s4);
-$S5=mysqli_num_rows($s5);
-/* other institutions */
-$t1=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t2=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t3=mysqli_query($conn,"select Sr_no from entry where Category='Other Institutions' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t4=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t5=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$T1=mysqli_num_rows($t1);
-$T2=mysqli_num_rows($t2);
-$T3=mysqli_num_rows($t3);
-$T4=mysqli_num_rows($t4);
-$T5=mysqli_num_rows($t5);
-/* Corporate Members */
-$u1=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u2=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u3=mysqli_query($conn,"select Sr_no from entry where Category='Corporate Members' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u4=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u5=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$U1=mysqli_num_rows($u1);
-$U2=mysqli_num_rows($u2);
-$U3=mysqli_num_rows($u3);
-$U4=mysqli_num_rows($u4);
-$U5=mysqli_num_rows($u5);
-/* Institution members */
-$v1=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v2=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v3=mysqli_query($conn,"select Sr_no from entry where Category='Institute Members' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v4=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v5=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$V1=mysqli_num_rows($v1);
-$V2=mysqli_num_rows($v2);
-$V3=mysqli_num_rows($v3);
-$V4=mysqli_num_rows($v4);
-$V5=mysqli_num_rows($v5);
-
-
-
-$query1=mysqli_query($conn,"select Status from entry where Status='Pending' and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$count1=mysqli_num_rows($query1);
-$query2=mysqli_query($conn,"select Sr_no from entry where Status='Approached' and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$count2=mysqli_num_rows($query2);
-$query3=mysqli_query($conn,"select Sr_no from entry where Status='Complete' and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$count3=mysqli_num_rows($query3);
-$query4=mysqli_query($conn,"select Sr_no from entry where Status='Closed' and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$count4=mysqli_num_rows($query4);
+if (isset($_POST['user_submit'])) {
+    $date1 = $_POST['date1'];
+    $date2 = $_POST['date2'];
+    $date_condition = "Req_date BETWEEN '$date1' AND '$date2'";
+    $custom_date = true;
+} else {
+    $date_condition = "MONTH(Req_date) = MONTH(CURRENT_DATE()) AND YEAR(Req_date) = YEAR(CURRENT_DATE())";
+    $custom_date = false;
 }
-?>	
 
+// Query 1: Category-wise & Status-wise counts
+$query = "
+    SELECT Category, Status, COUNT(*) as count
+    FROM entry
+    WHERE $date_condition
+    GROUP BY Category, Status
+";
+$result = mysqli_query($conn, $query);
+
+// Store counts in associative array
+$counts = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $cat = $row['Category'];
+    $status = $row['Status'];
+    $counts[$cat][$status] = $row['count'];
+}
+
+// Query 2: Status-wise total counts (all categories)
+$query_total = "
+    SELECT Status, COUNT(*) as count
+    FROM entry
+    WHERE $date_condition
+    GROUP BY Status
+";
+$result2 = mysqli_query($conn, $query_total);
+$status_counts = [];
+while ($row = mysqli_fetch_assoc($result2)) {
+    $status_counts[$row['Status']] = $row['count'];
+}
+
+// Extract values safely
+function getCount($arr, $cat, $status) {
+    return isset($arr[$cat][$status]) ? $arr[$cat][$status] : 0;
+}
+
+function getTotalCategory($arr, $cat) {
+    return isset($arr[$cat]) ? array_sum($arr[$cat]) : 0;
+}
+
+// Students
+$R1 = getTotalCategory($counts, 'Student');
+$R2 = getCount($counts, 'Student', 'Pending');
+$R3 = getCount($counts, 'Student', 'Approached');
+$R4 = getCount($counts, 'Student', 'Complete');
+$R5 = getCount($counts, 'Student', 'Closed');
+
+// Faculty
+$S1 = getTotalCategory($counts, 'Faculty');
+$S2 = getCount($counts, 'Faculty', 'Pending');
+$S3 = getCount($counts, 'Faculty', 'Approached');
+$S4 = getCount($counts, 'Faculty', 'Complete');
+$S5 = getCount($counts, 'Faculty', 'Closed');
+
+// Other Institutions
+$T1 = getTotalCategory($counts, 'Other Institution');
+$T2 = getCount($counts, 'Other Institution', 'Pending');
+$T3 = getCount($counts, 'Other Institution', 'Approached');
+$T4 = getCount($counts, 'Other Institution', 'Complete');
+$T5 = getCount($counts, 'Other Institution', 'Closed');
+
+// Corporate Members
+$U1 = getTotalCategory($counts, 'Corporate Member');
+$U2 = getCount($counts, 'Corporate Member', 'Pending');
+$U3 = getCount($counts, 'Corporate Member', 'Approached');
+$U4 = getCount($counts, 'Corporate Member', 'Complete');
+$U5 = getCount($counts, 'Corporate Member', 'Closed');
+
+// Institute Members
+$V1 = getTotalCategory($counts, 'Institute Member');
+$V2 = getCount($counts, 'Institute Member', 'Pending');
+$V3 = getCount($counts, 'Institute Member', 'Approached');
+$V4 = getCount($counts, 'Institute Member', 'Complete');
+$V5 = getCount($counts, 'Institute Member', 'Closed');
+
+// Staff
+$P1 = getTotalCategory($counts, 'Staff');
+$P2 = getCount($counts, 'Staff', 'Pending');
+$P3 = getCount($counts, 'Staff', 'Approached');
+$P4 = getCount($counts, 'Staff', 'Complete');
+$P5 = getCount($counts, 'Staff', 'Closed');
+
+// Indvidual Membership
+$W1 = getTotalCategory($counts, 'Individual Membership');
+$W2 = getCount($counts, 'Individual Membership', 'Pending');
+$W3 = getCount($counts, 'Individual Membership', 'Approached');
+$W4 = getCount($counts, 'Individual Membership', 'Complete');
+$W5 = getCount($counts, 'Individual Membership', 'Closed');
+
+// Alumni
+$X1 = getTotalCategory($counts, 'Alumni');
+$X2 = getCount($counts, 'Alumni', 'Pending');
+$X3 = getCount($counts, 'Alumni', 'Approached');
+$X4 = getCount($counts, 'Alumni', 'Complete');
+$X5 = getCount($counts, 'Alumni', 'Closed');
+
+// Overall Status Counts (all categories)
+$count1 = $status_counts['Pending'] ?? 0;
+$count2 = $status_counts['Approached'] ?? 0;
+$count3 = $status_counts['Complete'] ?? 0;
+$count4 = $status_counts['Closed'] ?? 0;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Report</title>
-<style>
-#chart-container{
-	width:100%;
-	height:auto;
-	
-}
+    <meta charset="UTF-8">
+    <title>Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Bootstrap 5.3.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- jQuery 3.7.1 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-</style>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <!-- Include Date Range Picker -->
-			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
- 
-<script>
-	$.noConflict();
-	jQuery(document).ready(function ($) {
-		var date_input=$('input[name="date1"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
+    <!-- Google Charts -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        #chart-container {
+            width: 100%;
+            height: auto;
+        }
+		body {
+			background-color: lightblue;
+		}
+    </style>
+
+    <!-- Google Chart: Status Pie -->
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+	<script>
+		$(document).ready(function () {
+			google.charts.load('current', { 'packages': ['corechart'] });
+			google.charts.setOnLoadCallback(drawStatusChart);
+
+			// Initial draw with no filters
+			function drawStatusChart(date1, date2) {
+				$.ajax({
+					url: 'status_chart_data.php',
+					method: 'POST',
+					data: { status_date1: date1, status_date2: date2 },
+					dataType: 'json',
+					success: function (data) {
+					const chartData = google.visualization.arrayToDataTable([
+						['Status', 'Count'],
+						['Pending',    data.Pending ?? 0],
+						['Approached', data.Approached ?? 0],
+						['Received',   data.Received ?? 0],
+						['Complete',   data.Complete ?? 0],
+						['Closed',     data.Closed ?? 0],
+					]);
+
+					const options = {
+						is3D: true,
+						chartArea: { width: '90%', height: '80%' }
+					};
+
+					const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+					chart.draw(chartData, options);
+					}
+				});
+			}
+
+			// Handle Apply
+			$('#status_chart_filters').on('click', function (e) {
+				e.preventDefault();
+				const date1 = $('#status_date1').val();
+				const date2 = $('#status_date2').val();
+				drawStatusChart(date1, date2);
+			});
+
+			// Handle Current Month
+			$('#status_current_month').on('click', function () {
+				const now = new Date();
+				const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+				const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+				$('#status_date1').val(firstDay);
+				$('#status_date2').val(lastDay);
+				drawStatusChart(firstDay, lastDay);
+			});
+
+			// Handle Clear
+			$('#status_clear_filters').on('click', function () {
+				$('#status_date1').val('');
+				$('#status_date2').val('');
+				drawStatusChart();
+			});
 		})
-		var date_input=$('input[name="date2"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-		var date_input=$('input[name="req_date"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-</script>
- 
-	 <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
+	</script>
 
-      function drawChart() {
+	<script type="text/javascript">
+		$(document).ready(function () {
+		google.charts.load('current', { packages: ['corechart'] });
+		google.charts.setOnLoadCallback(drawCategoryChart);
 
-        var data = google.visualization.arrayToDataTable([
-          ['Status', 'Count'],
-          ['Pending',    <?php echo "$count1";?>],
-          ['Approached',       <?php echo "$count2";?>],
-          ['Complete',   <?php echo "$count3";?>],
-          ['Closed', <?php echo "$count4";?>]
-          
-        ]);
+		function drawCategoryChart(date1 = '', date2 = '') {
+			console.log("category chart");
+			$.ajax({
+			url: 'category_chart_data.php',
+			type: 'POST',
+			data: {
+				category_date1: date1,
+				category_date2: date2
+			},
+			dataType: 'json',
+			success: function (response) {
+				const chartData = new google.visualization.DataTable();
+				chartData.addColumn('string', 'Category');
+				chartData.addColumn('number', 'Queries');
+				chartData.addRows(response);
 
-        var options = {
-          title: 'Status-wise Statistics',
-		  is3D:true
-        };
+				const options = {
+				is3D: true,
+				chartArea: { width: '90%', height: '80%' }
+				};
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+				const chart = new google.visualization.PieChart(document.getElementById('piechart1'));
+				chart.draw(chartData, options);
+			}
+			});
+		}
 
-        chart.draw(data, options);
-      }
-    </script>
-   <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
+		$('#category_chart_filters').on('click', function () {
+			const date1 = $('#category_date1').val();
+			const date2 = $('#category_date2').val();
+			drawCategoryChart(date1, date2);
+		});
 
-      function drawChart() {
+		$('#category_current_month').on('click', function () {
+			const now = new Date();
+			const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+			const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+			$('#category_date1').val(firstDay);
+			$('#category_date2').val(lastDay);
+			drawCategoryChart(firstDay, lastDay);
+		});
 
-        var data = google.visualization.arrayToDataTable([
-          ['Category', 'Queries'],
-          ['Student',    <?php echo"$R1";?>],
-          ['Faculty',       <?php echo"$S1";?>],
-          ['Other Institutions',   <?php echo"$T1";?>],
-          ['Corporate Members', <?php echo"$U1";?>],
-          ['Institute Members',     <?php echo"$V1";?>]
-        ]);
-
-        var options = {
-          title: 'Category-wise Statistics',
-		  is3D:true
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart1'));
-
-        chart.draw(data, options);
-      }
-    </script>
+		$('#category_clear_filters').on('click', function () {
+			$('#category_date1').val('');
+			$('#category_date2').val('');
+			drawCategoryChart();
+		});
+		});
+	</script>
 
 </head>
 
- 
-
-<body >
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="../index.php">IITGN</a>
-    </div>
-    <ul class="nav navbar-nav ">
-      
-	  <?php 
-	   if($_SESSION['type']=='0' || $_SESSION['type']=='1' ){
-		   ?>
-      		<li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage
-        <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-			<li><a href="../institutions/index.php">Institutions</a></li>
-          
-          <li><a href="../journal/index.php">Journals</a></li>
-		  <li><a href="../patrons/index.php">Patrons</a></li>
-		  
-          
-        </ul>
-      </li>
-	  <li><a href="../biblo_search1.php">Search</a></li>
-	  <li><a href="../orders.php">Orders</a></li>
-	   <?php } ?>
-	  <li><a href="../index.php">Reports</a></li>
-      <?php
-		if($_SESSION['type']=='0'){
-			echo"<li><a href='../users/index.php'>Settings</a></li>";
-		}
-
-	  ?>
-    </ul>
-   
-       <ul class="nav navbar-nav navbar-right">
-      <?php
-	  if(isset($_SESSION['uid'])){
-	  echo "<li><a href='#'>User ".$_SESSION['uid']."</a></li>";
-      echo"<li><a href='../logout.php'><span class='glyphicon glyphicon-log-in'></span> Logout</a></li>";
-	  }
-	  ?>
-    </ul>
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="../../home.php">Home</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
+		<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			<li class="nav-item"><a class="nav-link" href="../../index.php">Entries</a></li>
+			<?php if($_SESSION['type']=='0' || $_SESSION['type']=='1'){ ?>
+			<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</a>
+			<ul class="dropdown-menu">
+				<li><a class="dropdown-item" href="../../institutions/index.php">Institutions</a></li>
+				<li><a class="dropdown-item" href="../../journal/index.php">Document Sources</a></li>
+				<li><a class="dropdown-item" href="../../patrons/index.php">Patrons</a></li>
+			</ul>
+			</li>
+			<li class="nav-item"><a class="nav-link" href="../../orders.php">Requests</a></li>
+			<?php } ?>
+			<li class="nav-item"><a class="nav-link" href="../../reports/index.php">Reports</a></li>
+			<?php if($_SESSION['type']=='0'){ ?>
+			<li class="nav-item"><a class="nav-link" href="../../users/index.php">Users</a></li>
+			<?php } ?>
+		</ul>
+		<ul class="navbar-nav ms-auto">
+			<?php if(isset($_SESSION['uid'])){ ?>
+			<li class="nav-item"><a class="nav-link">User <?php echo $_SESSION['uid']; ?></a></li>
+			<li class="nav-item"><a class="nav-link" href="../../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+			<?php } ?>
+		</ul>
+		</div>
+	</div>
+	</nav>
+<br><br><br>
+<h1 class="text-center mb-4">DDS Statistics</h1>
+<div class="container mt-4">
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">Report based on Institutions (Top 10)</div>
+        <div class="card-body">
+			<div class="row mb-3 align-items-end">
+				<div class="col-auto">
+					<label for="date1" class="form-label">From</label>
+					<input type="date" id="date1" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+					<label for="date2" class="form-label">To</label>
+					<input type="date" id="date2" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+					<button id="applyFilter" class="btn btn-primary btn-sm">Apply</button>
+					<button id="currentMonth" class="btn btn-info btn-sm">Current Month</button>
+					<button id="clearFilter" class="btn btn-secondary btn-sm">Clear Filters</button>
+				</div>
+			</div>
+          <div id="chart-container"><canvas id="mycanvas1"></canvas></div>
+        </div>
       </div>
-   
-  </div>
-</nav>
-
-<br/><br/><br/>
-<center>
-<div class="row">
-<div class="col-md-6">
-<div class="panel panel-default">
-  <div class="panel-heading">Report based on Institutions</div>
-  <div class="panel-body">
-	<div id="chart-container">
-	<canvas id="mycanvas1"></canvas>
-	</div>
-  </div>
-</div>
-</div>
-<div class="col-md-6">
-<div class="panel panel-default">
-  <div class="panel-heading">Report based on Journals</div>
-  <div class="panel-body">
-	<div id="chart-container">
-	<canvas id="mycanvas2"></canvas>
-	</div>
-  </div>
-</div>
-</div>
-</div>
-
-<!--
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
-
-		
-						<button type="submit" name="user_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-		-->
- <div class="row">
-              <div class="col-md-6 col-sm-6 col-xs-12">
-			  <div class="panel-group">
-			  <div class="panel panel-default">
-			  <div class="panel-heading">Report based on Status</div>
-			  <div class="panel-body">
-                <div id="piechart" style="width: 600px; height: 270px;"></div>
-                </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">Report based on Journals (Top 10)</div>
+        <div class="card-body">
+			<div class="row mb-3 align-items-end">
+				<div class="col-auto">
+					<label for="journal_date1" class="form-label mb-1">From:</label>
+					<input type="date" id="journal_date1" class="form-control form-control-sm">
 				</div>
-				
-              </div>
-			  </div>
-			  <div class="col-md-6 col-sm-6 col-xs-12">
-			  <div class="panel-group">
-			  <div class="panel panel-default">
-			  <div class="panel-heading">Report based on Category</div>
-			  <div class="panel-body">
-                <div id="piechart1" style="width: 600px; height: 270px;"></div>
-                </div>
+				<div class="col-auto">
+					<label for="journal_date2" class="form-label mb-1">To:</label>
+					<input type="date" id="journal_date2" class="form-control form-control-sm">
 				</div>
+				<div class="col-auto">
+					<button id="journal_btn_apply" class="btn btn-primary btn-sm">Apply</button>
+					<button id="journal_btn_month" class="btn btn-info btn-sm">Current Month</button>
+					<button id="journal_btn_clear" class="btn btn-secondary btn-sm">Clear Filters</button>
 				</div>
-              </div>
-			  </div>
-</div>
-<div class="row">
-<div class="col-md-6">
-<div class="panel panel-default">
-  <div class="panel-heading">Report based on Document-type</div>
-  <div class="panel-body">
-	<div id="chart-container">
-	<canvas id="mycanvas3"></canvas>
-	</div>
+			</div>
+          <div id="chart-container"><canvas id="mycanvas2"></canvas></div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-</div>
-<div class="col-md-6">
-<div class="panel panel-default">
-  <div class="panel-heading">Report based on Discipline</div>
-  <div class="panel-body">
-	<div id="chart-container">
-	<canvas id="mycanvas5"></canvas>
-	</div>
+  <div class="row g-4 mt-2">
+  <div class="col-md-6">
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-success text-white">
+        Report based on Status
+      </div>
+      <div class="card-body">
+        <div class="row mb-3 align-items-end">
+          <div class="col-auto">
+            <label for="status_date1" class="form-label mb-1">From:</label>
+            <input type="date" id="status_date1" class="form-control form-control-sm">
+          </div>
+          <div class="col-auto">
+            <label for="status_date2" class="form-label mb-1">To:</label>
+            <input type="date" id="status_date2" class="form-control form-control-sm">
+          </div>
+          <div class="col-auto">
+            <button id="status_chart_filters" class="btn btn-success btn-sm">Apply</button>
+            <button id="status_current_month" class="btn btn-info btn-sm">Current Month</button>
+            <button id="status_clear_filters" class="btn btn-secondary btn-sm">Clear Filters</button>
+          </div>
+        </div>
+        <div id="piechart" style="width:100%;height:270px;"></div>
+      </div>
+    </div>
   </div>
-</div>
-</div>
-</div>
-<div class="row">
-<div class="col-md-6">
-<div class="panel panel-default">
-  <div class="panel-heading">Report based on Program Name</div>
-  <div class="panel-body">
-	<div id="chart-container">
-	<canvas id="mycanvas4"></canvas>
-	</div>
-  </div>
-</div>
-</div>
-</div>
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/Chart.min.js"></script>
 
-<script type="text/javascript" src="js/app1.js"></script>
-<script type="text/javascript" src="js/app2.js"></script>
-<script type="text/javascript" src="js/app3.js"></script>
-<script type="text/javascript" src="js/app4.js"></script>
-<script type="text/javascript" src="js/app5.js"></script>
+	<div class="col-md-6">
+		<div class="card shadow-sm mt-4">
+		<div class="card-header bg-success text-white">Report based on Category</div>
+		<div class="card-body">
+			<div class="row mb-3 align-items-end">
+				<div class="col-auto">
+					<label for="category_date1" class="form-label mb-1">From:</label>
+					<input type="date" id="category_date1" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+					<label for="category_date2" class="form-label mb-1">To:</label>
+					<input type="date" id="category_date2" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+					<button id="category_chart_filters" class="btn btn-success btn-sm">Apply</button>
+					<button id="category_current_month" class="btn btn-info btn-sm">Current Month</button>
+					<button id="category_clear_filters" class="btn btn-secondary btn-sm">Clear Filters</button>
+				</div>
+			</div>
+			<div id="piechart1" style="width: 100%; height: 270px;"></div>
+		</div>
+		</div>
+	</div>
+	</div>
+
+  <div class="row g-4 mt-2">
+    <div class="col-md-6">
+		<div class="card shadow-sm mt-4">
+			<div class="card-header bg-info text-white">Report based on Document-type</div>
+			<div class="card-body">
+			<div class="row mb-3 align-items-end">
+				<div class="col-auto">
+				<label for="doc_date1" class="form-label mb-1">From:</label>
+				<input type="date" id="doc_date1" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+				<label for="doc_date2" class="form-label mb-1">To:</label>
+				<input type="date" id="doc_date2" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+				<button id="doc_btn_apply" class="btn btn-info btn-sm">Apply</button>
+				<button id="doc_btn_month" class="btn btn-primary btn-sm">Current Month</button>
+				<button id="doc_btn_clear" class="btn btn-secondary btn-sm">Clear Filters</button>
+				</div>
+			</div>
+			<div id="chart-container"><canvas id="mycanvas3"></canvas></div>
+			</div>
+		</div>
+	</div>
+
+    <div class="col-md-6">
+		<div class="card shadow-sm mt-4">
+			<div class="card-header bg-info text-white">Report based on Department (Top 10)</div>
+			<div class="card-body">
+			<div class="row mb-3 align-items-end">
+				<div class="col-auto">
+				<label for="discipline_date1" class="form-label mb-1">From:</label>
+				<input type="date" id="discipline_date1" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+				<label for="discipline_date2" class="form-label mb-1">To:</label>
+				<input type="date" id="discipline_date2" class="form-control form-control-sm">
+				</div>
+				<div class="col-auto">
+				<button id="discipline_btn_apply" class="btn btn-info btn-sm">Apply</button>
+				<button id="discipline_btn_month" class="btn btn-primary btn-sm">Current Month</button>
+				<button id="discipline_btn_clear" class="btn btn-secondary btn-sm">Clear Filters</button>
+				</div>
+			</div>
+			<div id="chart-container"><canvas id="mycanvas5"></canvas></div>
+			</div>
+		</div>
+	</div>
+
+  </div>
+
+</div>
+
+<!-- Chart.js and your custom chart apps -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/app1.js"></script>
+<script src="js/app2.js"></script>
+<script src="js/app3.js"></script>
+<script src="js/app5.js"></script>
 </body>
+</html>

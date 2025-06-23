@@ -55,43 +55,46 @@ if (isset($_POST['update'])) {
     <style>
         body {
             padding-top: 70px;
+            background-color: lightblue;
         }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="../index.php">IITGN</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1'): ?>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Manage</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-                        <li><a class="dropdown-item" href="../journal/index.php">Journals</a></li>
-                        <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="../biblo_search1.php">Search</a></li>
-                <li class="nav-item"><a class="nav-link" href="../orders.php">Orders</a></li>
-                <?php endif; ?>
-                <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
-                <?php if ($_SESSION['type'] == '0'): ?>
-                <li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>
-                <?php endif; ?>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="../home.php">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
+        <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1') { ?>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown">
+              Manage
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
+              <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
+              <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
             </ul>
-            <ul class="navbar-nav">
-                <?php if (isset($_SESSION['uid'])): ?>
-                <li class="nav-item"><a class="nav-link" href="#">User <?php echo $_SESSION['uid']; ?></a></li>
-                <li class="nav-item"><a class="nav-link" href="../logout.php">Logout</a></li>
-                <?php endif; ?>
-            </ul>
-        </div>
+          </li>
+        <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
+        <?php } ?>
+        <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
+        <?php if ($_SESSION['type'] == '0') { ?>
+        <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
+        <?php } ?>
+      </ul>
+      <ul class="navbar-nav">
+        <?php if (isset($_SESSION['uid'])): ?>
+          <li class="nav-item"><a class="nav-link">User <?php echo $_SESSION['uid']; ?></a></li>
+          <li class="nav-item"><a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        <?php endif; ?>
+      </ul>
     </div>
+  </div>
 </nav>
 
 <div class="container">

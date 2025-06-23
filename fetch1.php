@@ -1,12 +1,11 @@
 <?php
-//fetch.php
-$connect = mysqli_connect("localhost", "root", "", "dds");
-$request = mysqli_real_escape_string($connect, $_POST["query"]);
+include('dbcon.php');
+$request = mysqli_real_escape_string($conn, $_POST["query"]);
 $query = "
  SELECT * FROM journal_list WHERE Journal_name LIKE '%".$request."%'
 ";
 
-$result = mysqli_query($connect, $query);
+$result = mysqli_query($conn, $query);
 
 $data = array();
 

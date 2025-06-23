@@ -4,7 +4,7 @@ include('dbcon.php');
 
 $length = isset($_POST['length']) ? intval($_POST['length']) : 25;
 $start = isset($_POST['start']) ? intval($_POST['start']) : 0;
-$searchValue = isset($_POST['search']['value']) ? $_POST['search']['value'] : '';
+$searchValue = isset($_POST['searchValue']) ? $_POST['searchValue'] : '';
 
 // Column index to database column name
 $columns = [
@@ -30,18 +30,28 @@ $baseQuery = "FROM entry e LEFT JOIN patrons p ON e.Req_by = p.Sr_no";
 
 // Search filtering
 $searchQuery = " WHERE 1=1";
+$searchColumn = $_POST['searchColumn'] ?? '';
 if (!empty($searchValue)) {
+
     $searchValue = $conn->real_escape_string($searchValue);
-    $searchQuery .= " AND (
-        e.Sr_no LIKE '%$searchValue%' OR 
-        e.Req_date LIKE '%$searchValue%' OR 
-        p.Display_name LIKE '%$searchValue%' OR 
-        e.Category LIKE '%$searchValue%' OR 
-        e.Bibliographic_details LIKE '%$searchValue%' OR 
-        e.Journal_name LIKE '%$searchValue%' OR 
-        e.Document_type LIKE '%$searchValue%' OR 
-        e.Status LIKE '%$searchValue%'
-    )";
+    if (!empty($searchColumn)) {
+        $allowedCols = ['e.Sr_no', 'e.Req_date', 'p.Display_name', 'e.Category', 'e.Bibliographic_details', 'e.Journal_name', 'e.Document_type', 'e.Status'];
+        if (in_array($searchColumn, $allowedCols)) {
+            $searchQuery .= " AND $searchColumn LIKE '%$searchValue%'";
+        }
+    }
+    else{
+        $searchQuery .= " AND (
+            e.Sr_no LIKE '%$searchValue%' OR 
+            e.Req_date LIKE '%$searchValue%' OR 
+            p.Display_name LIKE '%$searchValue%' OR 
+            e.Category LIKE '%$searchValue%' OR 
+            e.Bibliographic_details LIKE '%$searchValue%' OR 
+            e.Journal_name LIKE '%$searchValue%' OR 
+            e.Document_type LIKE '%$searchValue%' OR 
+            e.Status LIKE '%$searchValue%'
+        )";
+    }
 }
 
 // Date filter support (if needed later)

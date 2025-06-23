@@ -1,6 +1,10 @@
 /* General Body Styling */
 body {
-  background: #f8f9fa; /* from login.php */
+  background-image: url('../../image/bg3.png'); /* added background image */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  min-height: 100vh;
   color: #666666;
   font-family: 'Roboto', 'RobotoDraft', sans-serif;
   font-size: 14px;
@@ -13,7 +17,7 @@ body {
   padding: 50px 0;
   text-align: center;
   letter-spacing: 2px;
-  margin-top: 50px; /* from login.php */
+  margin-top: 50px;
 }
 
 .pen-title h1 {
@@ -25,6 +29,7 @@ body {
 .pen-title h2 {
   font-size: 24px;
   font-weight: 400;
+  color: #333;
 }
 
 .pen-title span {
@@ -44,14 +49,14 @@ body {
 /* Form Module */
 .form-module {
   position: relative;
-  background: #ffffff;
-  max-width: 400px; /* widened from 320px */
+  background: rgba(255, 255, 255, 0.95); /* semi-transparent for background readability */
+  max-width: 400px;
   width: 100%;
-  margin: 50px auto; /* centered with spacing */
-  padding: 30px;     /* from login.php */
-  border-radius: 10px; /* from login.php */
+  margin: 60px auto;
+  padding: 30px;
+  border-radius: 10px;
   border-top: 5px solid #33b5e5;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); /* stronger shadow */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Toggle (optional feature, hidden by default) */
@@ -128,7 +133,7 @@ body {
   cursor: pointer;
   width: 100%;
   padding: 10px;
-  background-color: #0d6efd; /* BS5 Primary */
+  background-color: #0d6efd;
   color: #ffffff;
   border: none;
   border-radius: 5px;
@@ -137,23 +142,6 @@ body {
 
 .form-module button:hover {
   background-color: #0b5ed7;
-}
-
-/* CTA / Forgot Password */
-.form-module .cta {
-  background: #f2f2f2;
-  width: 100%;
-  padding: 15px 40px;
-  box-sizing: border-box;
-  color: #666666;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 15px;
-}
-
-.form-module .cta a {
-  color: #333333;
-  text-decoration: none;
 }
 
 /* Error Alert */

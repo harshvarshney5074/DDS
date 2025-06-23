@@ -1,5 +1,7 @@
 <?php
+session_start();
 include("dbcon.php");
+include('checkUser.php');
 
 if (isset($_GET['edit_record'])) {
     $get_id = $_GET['edit_record'];
@@ -76,9 +78,9 @@ if (isset($_POST['update'])) {
 
     // Handle file upload if status is Complete or Received and file uploaded
     $file_name = $file_tmp = '';
-    if (($status === 'Complete' || $status === 'Received') && isset($_FILES['fil']) && $_FILES['fil']['error'] === 0) {
-        $file_name = basename($_FILES['fil']['name']);
-        $file_tmp = $_FILES['fil']['tmp_name'];
+    if (($status === 'Complete' || $status === 'Received') && isset($_FILES['file']) && $_FILES['file']['error'] === 0) {
+        $file_name = basename($_FILES['file']['name']);
+        $file_tmp = $_FILES['file']['tmp_name'];
         $upload_dir = "uploads/";
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0755, true);
@@ -138,8 +140,6 @@ if (isset($_POST['update'])) {
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
     <!-- Bootstrap5 Multiselect -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap5-multiselect@1.1.1/dist/css/bootstrap-multiselect.min.css" rel="stylesheet" />
-
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>  
@@ -157,6 +157,9 @@ if (isset($_POST['update'])) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
 
     <style>
+        body {
+            background-color: lightblue;
+        }
         input[type=text], select, textarea {
             width: 100%;
             padding: 12px 20px;
@@ -189,7 +192,7 @@ if (isset($_POST['update'])) {
 
     <script>
         function enable_text(status) {
-            document.getElementById("fil").disabled = !status;
+            document.getElementById("file").disabled = !status;
         }
 
         $(document).ready(function() {
@@ -225,20 +228,34 @@ if (isset($_POST['update'])) {
 <body onload="enable_text(document.getElementById('status').value === 'Complete' || document.getElementById('status').value === 'Received');">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="index.php">IITGN</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+    <a class="navbar-brand" href="home.php">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarContent">
+    <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item active"><a class="nav-link" href="index.php">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
+        <?php if($_SESSION['type']=='0' || $_SESSION['type']=='1'){ ?>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
+            <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
+            <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
+        <?php } ?>
+        <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
+        <?php if($_SESSION['type']=='0'){ ?>
+        <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
+        <?php } ?>
       </ul>
       <ul class="navbar-nav ms-auto">
-        <?php if (isset($_SESSION['uid'])): ?>
-          <li class="nav-item">
-            <a class="nav-link" href="../logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
-          </li>
-        <?php endif; ?>
+        <?php if(isset($_SESSION['uid'])){ ?>
+        <li class="nav-item"><a class="nav-link">User <?php echo $_SESSION['uid']; ?></a></li>
+        <li class="nav-item"><a class="nav-link" href="logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+        <?php } ?>
       </ul>
     </div>
   </div>
@@ -326,7 +343,7 @@ if (isset($_POST['update'])) {
             <select name="doc_type" id="doc_type" class="form-select" required>
                 <option value="">-- Select Document Type --</option>
                 <?php
-                $doc_types = mysqli_query($conn, "SELECT * FROM document_type ORDER BY Document_type ASC");
+                $doc_types = mysqli_query($conn, "SELECT DISTINCT Document_type FROM document_type ORDER BY Document_type ASC");
                 while ($type = mysqli_fetch_assoc($doc_types)) {
                     $selected = ($type['Document_type'] == $current_doc_type) ? 'selected' : '';
                     echo '<option value="' . htmlspecialchars($type['Document_type']) . '" ' . $selected . '>' . htmlspecialchars($type['Document_type']) . '</option>';
@@ -342,7 +359,7 @@ if (isset($_POST['update'])) {
 
         <div class="mb-3">
             <label for="biblio_det" class="form-label">Bibliographic Details</label>
-            <textarea rows="3" name="biblio_det" class="form-control"><?php echo htmlspecialchars($biblio_det); ?></textarea>
+            <textarea rows="3" name="biblio_det" id="biblio_det" class="form-control"><?php echo htmlspecialchars($biblio_det); ?></textarea>
         </div>
 
         <div class="mb-3">
@@ -359,7 +376,7 @@ if (isset($_POST['update'])) {
 
         <div class="mb-3">
             <label for="file" class="form-label">File (PDF/Doc)</label>
-            <input type="file" id="fil" name="fil" class="form-control" disabled />
+            <input type="file" id="file" name="file" class="form-control" disabled />
         </div>
 
         <div class="mb-3">

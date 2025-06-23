@@ -29,31 +29,37 @@ function trim_input($data) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    body {
+      background-color: lightblue;
+    }
+  </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="../index.php">IITGN</a>
+    <a class="navbar-brand" href="../home.php">Home</a>
     <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
         <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">Manage</a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-            <li><a class="dropdown-item" href="../journal/index.php">Journals</a></li>
+            <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
             <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
           </ul>
         </li>
-        <li class="nav-item"><a class="nav-link" href="../biblo_search1.php">Search</a></li>
-        <li class="nav-item"><a class="nav-link" href="../orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
         <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] === '0'): ?>
-        <li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>
+        <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
         <?php endif; ?>
       </ul>
       <ul class="navbar-nav ms-auto">
@@ -71,7 +77,7 @@ function trim_input($data) {
 
   <form method="post" name="inst_form" onsubmit="return validateForm();">
     <div class="mb-3">
-      <label for="roll_no" class="form-label">Roll No</label>
+      <label for="roll_no" class="form-label">Roll No/ID</label>
       <input type="text" class="form-control" id="roll_no" name="roll_no" value="<?= $roll_no ?>" required>
     </div>
     <div class="mb-3">
@@ -79,15 +85,15 @@ function trim_input($data) {
       <input type="text" class="form-control" id="display_name" name="display_name" value="<?= $display_name ?>" required>
     </div>
     <div class="mb-3">
-      <label for="email_id" class="form-label">Email Id</label>
+      <label for="email_id" class="form-label">Email ID</label>
       <input type="email" class="form-control" id="email_id" name="email_id" value="<?= $email_id ?>" required>
     </div>
     <div class="mb-3">
-      <label for="discipline" class="form-label">Discipline</label>
+      <label for="discipline" class="form-label">Department</label>
       <input type="text" class="form-control" id="discipline" name="discipline" value="<?= $discipline ?>" required>
     </div>
     <div class="mb-3">
-      <label for="program_name" class="form-label">Program Name</label>
+      <label for="program_name" class="form-label">Program/Designation</label>
       <input type="text" class="form-control" id="program_name" name="program_name" value="<?= $program_name ?>" required>
     </div>
     <div class="mb-3">

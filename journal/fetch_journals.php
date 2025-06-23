@@ -1,7 +1,7 @@
 <?php
 include('../dbcon.php'); // Update path if needed
 
-$columns = ['Journal_name', 'Print_ISSN', 'E_ISSN', 'Pub_name', 'Main_pub', 'Pub_country'];
+$columns = ['Journal_name', 'Print_ISSN', 'E_ISSN', 'Pub_name', 'Pub_country'];
 
 $draw = intval($_POST['draw']);
 $row = intval($_POST['start']);
@@ -22,8 +22,7 @@ if ($searchValue != '') {
         Journal_name LIKE '%$searchValue%' OR 
         Print_ISSN LIKE '%$searchValue%' OR 
         E_ISSN LIKE '%$searchValue%' OR 
-        Pub_name LIKE '%$searchValue%' OR 
-        Main_pub LIKE '%$searchValue%' OR 
+        Pub_name LIKE '%$searchValue%' OR  
         Pub_country LIKE '%$searchValue%'
     )";
 }
@@ -48,7 +47,6 @@ while ($row = mysqli_fetch_assoc($journals)) {
         "Print_ISSN" => $row['Print_ISSN'],
         "E_ISSN" => $row['E_ISSN'],
         "Pub_name" => $row['Pub_name'],
-        "Main_pub" => $row['Main_pub'],
         "Pub_country" => $row['Pub_country'],
         "Actions" => '<a href="edit11.php?edit_record=' . $row["S_no"] . '" class="btn btn-info btn-xs">Edit</a>
                     <a href="delete_record.php?delete_record=' . $row["S_no"] . '" class="btn btn-danger btn-xs" onclick="return confirm(\'Are you sure you want to delete this item?\');">Delete</a>'

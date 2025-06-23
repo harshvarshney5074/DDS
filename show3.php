@@ -7,6 +7,7 @@ include("dbcon.php");
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DDS - Send Mail</title>
   
   <!-- Bootstrap 5 -->
@@ -30,6 +31,7 @@ include("dbcon.php");
   <style>
     body {
       padding-top: 70px;
+      background-color: lightblue;
     }
     .file-list li {
       word-break: break-word;
@@ -41,27 +43,27 @@ include("dbcon.php");
 <!-- ✅ Consistent Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="index.php">IITGN</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <a class="navbar-brand" href="home.php">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
         <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Manage</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="journal/index.php">Journals</a></li>
+              <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
               <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a class="nav-link" href="biblo_search1.php">Search</a></li>
-          <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
         <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] === '0'): ?>
-          <li class="nav-item"><a class="nav-link" href="users/index.php">Settings</a></li>
+        <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
         <?php endif; ?>
       </ul>
       <ul class="navbar-nav ms-auto">
@@ -90,7 +92,10 @@ include("dbcon.php");
 
     echo '<div class="mb-3"><strong>Attached Files:</strong><ul class="file-list">';
 
+    $sent_entry_ids = [];
+
     foreach ($_POST['send'] as $send_id) {
+      $sent_entry_ids[] = $send_id;
       $send_m = mysqli_query($conn, "SELECT * FROM entry WHERE Sr_no='$send_id'");
       $row = mysqli_fetch_array($send_m);
 
@@ -104,6 +109,8 @@ include("dbcon.php");
 
       echo "<li>$file_name</li>";
     }
+
+    $entry_ids_str = implode(',', $sent_entry_ids);
 
     echo '</ul></div>';
 
@@ -150,10 +157,11 @@ include("dbcon.php");
 
     <div class="mb-3">
       <label for="body" class="form-label">Body:</label>
-      <textarea name="Body" class="form-control" rows="15"><?= htmlspecialchars($body) ?></textarea>
+      <textarea name="Body" class="form-control" id="body" rows="15"><?= htmlspecialchars($body) ?></textarea>
     </div>
 
     <input type="hidden" name="order_no" value="<?= htmlspecialchars($order_no) ?>">
+    <input type="hidden" name="entry_ids" value="<?= htmlspecialchars($entry_ids_str) ?>">
 
     <div class="d-grid">
       <button type="submit" name="send1" class="btn btn-primary">Send Mail</button>

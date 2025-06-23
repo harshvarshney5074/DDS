@@ -1,1355 +1,876 @@
-<!DOCTYPE html>
 <?php 
 session_start();
 include('dbcon.php');
 include('checkUser.php');
-
-
-$sql1=mysqli_query($conn,"select Sr_no from entry where Category='Student'");
-$sql2=mysqli_query($conn,"select Sr_no from entry where Category='Faculty'");
-$sql3=mysqli_query($conn,"select Sr_no from entry where Category='Other Institutions'");
-$sql4=mysqli_query($conn,"select Sr_no from entry where Category='Corporate Members'");
-$sql5=mysqli_query($conn,"select Sr_no from entry where Category='Institute Members'");
-$s1=mysqli_num_rows($sql1);
-$s2=mysqli_num_rows($sql2);
-$s3=mysqli_num_rows($sql3);
-$s4=mysqli_num_rows($sql4);
-$s5=mysqli_num_rows($sql5);
-
 ?>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- Meta, title, CSS, favicons, etc. -->
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DDS | Report</title>
 
-    <title>DDS|Report</title>
-
-    <!-- Bootstrap -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>  
-		   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
-           <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />  
-           
-		    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>  
-           <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>            
-           <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />  
-		   <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>  
-           <script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap.min.js"></script>            
-           <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" />  
-		   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.3.1/css/buttons.dataTables.min.css" /> 
-		   <script src="https://cdn.datatables.net/buttons/1.3.1/js/dataTables.buttons.min.js"></script> 
-		   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script> 
-		   <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
-		   <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>
-		   <script src="https://cdn.datatables.net/buttons/1.3.1/js/buttons.html5.min.js"></script>
-			<!-- Include Date Range Picker -->
-			<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
-   
-    <!-- Custom Theme Style -->
-    <link href="build/css/custom.min.css" rel="stylesheet">
-	<style>
-	.tile_count{
-		padding-top:10px;
-	}
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 	
-	</style>
-<!-- categories wise pie chart -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-  </head>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <body>
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="../index.php">IITGN</a>
-    </div>
-    <ul class="nav navbar-nav ">
-      
-	  <?php 
-	   if($_SESSION['type']=='0' || $_SESSION['type']=='1' ){
-		   ?>
-      		<li class="dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Manage
-        <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-			<li><a href="../institutions/index.php">Institutions</a></li>
-          
-          <li><a href="../journal/index.php">Journals</a></li>
-		  <li><a href="../patrons/index.php">Patrons</a></li>
-		  
-          
-        </ul>
-      </li>
-	  <li><a href="../biblo_search1.php">Search</a></li>
-	  <li><a href="../orders.php">Orders</a></li>
-	   <?php } ?>
-	  <li><a href="../reports/charts/bargraph.php">Statistics</a></li>
-      <?php
-		if($_SESSION['type']=='0'){
-			echo"<li><a href='../users/index.php'>Settings</a></li>";
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css" rel="stylesheet" />
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/pdfmake.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+
+    <style>
+		.tile_count {
+			padding-top: 10px;
 		}
+		body {
+			background-color: lightblue;
+		}
+    </style>
+  </head>
+  <body>
 
-	  ?>
-    </ul>
-   
-       <ul class="nav navbar-nav navbar-right">
-      <?php
-	  if(isset($_SESSION['uid'])){
-	  echo "<li><a href='#'>User ".$_SESSION['uid']."</a></li>";
-      echo"<li><a href='../logout.php'><span class='glyphicon glyphicon-log-in'></span> Logout</a></li>";
-	  }
-	  ?>
-    </ul>
-      </div>
-   
-  </div>
-</nav>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="../home.php">Home</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
+		<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNav">
+		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+			<li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
+			<?php if($_SESSION['type']=='0' || $_SESSION['type']=='1'){ ?>
+			<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</a>
+			<ul class="dropdown-menu">
+				<li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
+				<li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
+				<li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
+			</ul>
+			</li>
+			<li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
+			<?php } ?>
+			<li class="nav-item"><a class="nav-link" href="../reports/charts/bargraph.php">Statistics</a></li>
+			<?php if($_SESSION['type']=='0'){ ?>
+			<li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
+			<?php } ?>
+		</ul>
+		<ul class="navbar-nav ms-auto">
+			<?php if(isset($_SESSION['uid'])){ ?>
+			<li class="nav-item"><a class="nav-link">User <?php echo $_SESSION['uid']; ?></a></li>
+			<li class="nav-item"><a class="nav-link" href="../logout.php"><i class="fa fa-sign-out-alt"></i> Logout</a></li>
+			<?php } ?>
+		</ul>
+		</div>
+	</div>
+	</nav>
+<br><br><br>
+<h1 class="text-center">DDS Reports</h1>
 
     <div class="container body">
       <div class="main_container">
- 
-        <!-- top navigation -->
 
         <!-- /top navigation -->
 <?php 
-	$sql1=mysqli_query($conn,"select Sr_no from entry");
-	$sql12=mysqli_num_rows($sql1);
-	$sql2=mysqli_query($conn,"select Sr_no from entry where Status='Pending'");
-	$sql22=mysqli_num_rows($sql2);
-	$sql3=mysqli_query($conn,"select Sr_no from entry where Status='Approached'");
-	$sql32=mysqli_num_rows($sql3);
-	$sql4=mysqli_query($conn,"select Sr_no from entry where Status='Complete'");
-	$sql42=mysqli_num_rows($sql4);
-	$sql5=mysqli_query($conn,"select Sr_no from entry where Status='Closed'");
-	$sql52=mysqli_num_rows($sql5);
-	$sql6=mysqli_query($conn,"select Sr_no from entry where Category='Faculty'");
-	$sql62=mysqli_num_rows($sql6);
-	$sql7=mysqli_query($conn,"select Sr_no from entry where Category='Student'");
-	$sql72=mysqli_num_rows($sql7);
+	$status_counts = [
+    'Total' => 0,
+    'Pending' => 0,
+    'Approached' => 0,
+    'Received' => 0,
+    'Complete' => 0,
+    'Closed' => 0
+];
 
+// Get status-wise counts
+$result = mysqli_query($conn, "SELECT Status, COUNT(*) as cnt FROM entry GROUP BY Status");
+while ($row = mysqli_fetch_assoc($result)) {
+    $status = $row['Status'];
+    $count = $row['cnt'];
+    if (isset($status_counts[$status])) {
+        $status_counts[$status] = $count;
+    }
+    $status_counts['Total'] += $count;
+}
+
+// Patron type counts (category-wise)
+$category_counts = [];
+$cat_result = mysqli_query($conn, "SELECT Category, COUNT(*) as cnt FROM entry GROUP BY Category");
+while ($row = mysqli_fetch_assoc($cat_result)) {
+    $category_counts[$row['Category']] = $row['cnt'];
+}
 ?>
-<script>
-	$.noConflict();
-	jQuery(document).ready(function ($) {
-		var date_input=$('input[name="date1"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-		var date_input=$('input[name="date2"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-		var date_input=$('input[name="req_date"]'); //our date input has the name "date"
-		var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-		date_input.datepicker({
-			format: 'yyyy/mm/dd',
-			container: container,
-			todayHighlight: true,
-			autoclose: true,
-		})
-		$('#employee_data3').DataTable({
-			
-			
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		});
-		$('#employee_data').DataTable({
-			
-			"aaSorting": [[2, 'desc']],
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		});
-		$('#employee_data1').DataTable({
-			"aaSorting": [[1, 'desc']],
-			"aaSorting": [[2, 'desc']],
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		});
-				$('#employee_data6').DataTable({
-			
-			"aaSorting": [[2, 'desc']],
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		});
-		
-		$('#employee_data2').DataTable({
-			
-			"aaSorting": [[2, 'desc']],
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		}); 
-$('#employee_data7').DataTable({
-			
-			"aaSorting": [[2, 'desc']],
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		}); 
-$('#employee_data8').DataTable({
-			
-			"aaSorting": [[2, 'desc']],
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		}); 
-$('#employee_data9').DataTable({
-			
-			"aaSorting": [[2, 'desc']],
-			"lengthMenu": [[5,10, 25, 50, -1], [5,10, 25, 50, "All"]],
-						 dom: 'Bflit',
-        buttons: [
-           
-            'excelHtml5',
-            'csvHtml5',
-            'pdfHtml5'
-        ]
-		}); 		
-		    $(document).on('click', '.view_data', function(){  
-            
-                $.ajax({  
-                     url:"",  
-                     method:"POST",  
-                     data:{},  
-                     success:function(data){  
-                          $('#employee_detail').html(data);  
-                          $('#dataModal').modal('show');  
-                     }  
-                });  
-                      
-      }); 
-	})
 
+<script>
+  $.noConflict();
+  jQuery(document).ready(function ($) {
+	const tableCategory = $('#table_category').DataTable({
+		processing: true,
+		serverSide: true,
+		ajax: {
+			url: 'serverside/table_category.php',
+			type: 'POST',
+			data: function (d) {
+			d.date1 = $('input[name="date1"]').val();
+			d.date2 = $('input[name="date2"]').val();
+			}
+		},
+		order: [[1, 'desc']],
+		columns: [
+			{ title: "Category" },
+			{ title: "Total" },
+			{ title: "Pending" },
+			{ title: "Approached" },
+			{ title: "Received" },
+			{ title: "Complete" },
+			{ title: "Closed" }
+		],
+		lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+		pageLength: 10,
+		dom: 'Bflitp',
+		buttons: ['excelHtml5', 'csvHtml5', 'pdfHtml5']
+	});
+
+	$('#category-filter-form').on('submit', function(e) {
+		e.preventDefault();
+		tableCategory.ajax.reload();
+	});
+
+	$('#currentMonthBtn').on('click', function () {
+		const now = new Date();
+		const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+		const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+		// Format to YYYY-MM-DD
+		const formatDate = (d) => d.toISOString().slice(0, 10);
+
+		$('input[name="date1"]').val(formatDate(firstDay));
+		$('input[name="date2"]').val(formatDate(lastDay));
+
+		// Trigger DataTable reload
+		tableCategory.ajax.reload();
+	});
+
+	$('#clearFiltersBtn').on('click', function () {
+		$('input[name="date1"]').val('');
+		$('input[name="date2"]').val('');
+		tableCategory.ajax.reload();
+	});
+
+	const tableJournals = $('#table_journals').DataTable({
+		processing: true,
+		serverSide: true,
+		ajax: {
+			url: 'serverside/table_journals.php',
+			type: 'POST',
+			data: function (d) {
+			d.date1 = $('input[name="journal_date1"]').val();
+			d.date2 = $('input[name="journal_date2"]').val();
+			}
+		},
+		order: [[2, 'desc']], // Sort by count
+		columns: [
+			{ title: "#" },
+			{ title: "Journal Name" },
+			{ title: "No of Requests" },
+			{ title: "Pending" },
+			{ title: "Approached" },
+			{ title: "Received" },
+			{ title: "Complete" },
+			{ title: "Closed" }
+		],
+		lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+		pageLength: 5,
+		dom: 'Bflitp',
+		buttons: ['excelHtml5', 'csvHtml5', 'pdfHtml5']
+	});
+
+	$('#journal-filter-form').on('submit', function (e) {
+		e.preventDefault();
+		tableJournals.ajax.reload();
+	});
+
+		// Filter buttons
+	$('#journal-current-month').on('click', function () {
+		const now = new Date();
+		const start = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/01`;
+		const end = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()}`;
+		$('input[name="journal_date1"]').val(start);
+		$('input[name="journal_date2"]').val(end);
+		tableJournals.ajax.reload();
+	});
+
+	$('#journal-clear-filters').on('click', function () {
+		$('input[name="journal_date1"]').val('');
+		$('input[name="journal_date2"]').val('');
+		tableJournals.ajax.reload();
+	});
+
+	const tableLibraries = $('#table_libraries').DataTable({
+		processing: true,
+		serverSide: true,
+		ajax: {
+			url: 'serverside/table_libraries.php',
+			type: 'POST',
+			data: function (d) {
+				d.lib_date1 = $('input[name="lib_date1"]').val();
+				d.lib_date2 = $('input[name="lib_date2"]').val();
+			},
+			 dataSrc: function (json) {
+				// Set totals in the page
+				$('#total-sent').text(json.total_sent || 0);
+				$('#total-received').text(json.total_received || 0);
+				return json.data;
+			}
+		},
+		order: [[1, 'desc']], // Sort by Send Count
+		columns: [
+			{ title: "Institute Name" },
+			{ title: "No of Requests Sent" },
+			{ title: "Receive Count" }
+		],
+		lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+		pageLength: 5,
+		dom: 'Bflitp',
+		buttons: ['excelHtml5', 'csvHtml5', 'pdfHtml5']
+	});
+
+	$('#library-filter-form').on('submit', function (e) {
+		e.preventDefault();
+		tableLibraries.ajax.reload();
+	});
+
+	// Filter buttons
+	$('#library-current-month').on('click', function () {
+		const now = new Date();
+		const start = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/01`;
+		const end = `${now.getFullYear()}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()}`;
+		$('input[name="lib_date1"]').val(start);
+		$('input[name="lib_date2"]').val(end);
+		tableLibraries.ajax.reload();
+	});
+
+	$('#library-clear-filters').on('click', function () {
+		$('input[name="lib_date1"]').val('');
+		$('input[name="lib_date2"]').val('');
+		tableLibraries.ajax.reload();
+	});
+
+	const tableDocType = $('#table_doctype').DataTable({
+		processing: true,
+		serverSide: true,
+		ajax: {
+			url: 'serverside/table_doctype.php',
+			type: 'POST',
+			data: function(d) {
+			d.date1 = $('input[name="doctype_date1"]').val();
+			d.date2 = $('input[name="doctype_date2"]').val();
+			}
+		},
+		order: [[2, 'desc']],
+		columns: [
+			{ title: "#" },
+			{ title: "Document Type" },
+			{ title: "No of Requests" },
+			{ title: "Pending" },
+			{ title: "Approached" },
+			{ title: "Received" },
+			{ title: "Complete" },
+			{ title: "Closed" }
+		],
+		lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+		pageLength: 25,
+		dom: 'Bflitp',
+		buttons: ['excelHtml5', 'csvHtml5', 'pdfHtml5']
+		});
+
+		// Filter submit
+		$('#doctype-filter-form').on('submit', function(e) {
+		e.preventDefault();
+		tableDocType.ajax.reload();
+		});
+
+		// Set current month range
+		$('#doctype-current-month').on('click', function() {
+			const now = new Date();
+			const yyyy = now.getFullYear();
+			const mm = (now.getMonth() + 1).toString().padStart(2, '0');
+			const first = `${yyyy}-${mm}-01`;
+			const last = `${yyyy}-${mm}-${new Date(yyyy, now.getMonth() + 1, 0).getDate()}`;
+			$('input[name="doctype_date1"]').val(first);
+			$('input[name="doctype_date2"]').val(last);
+			tableDocType.ajax.reload();
+		});
+
+		// Clear filters
+		$('#doctype-clear-filters').on('click', function() {
+			$('input[name="doctype_date1"]').val('');
+			$('input[name="doctype_date2"]').val('');
+			tableDocType.ajax.reload();
+		});
+
+		const tableUsers = $('#table_users').DataTable({
+			processing: true,
+			serverSide: true,
+			ajax: {
+				url: 'serverside/table_users.php',
+				type: 'POST',
+				data: function(d) {
+				d.user_date1 = $('input[name="user_date1"]').val();
+				d.user_date2 = $('input[name="user_date2"]').val();
+				}
+			},
+			order: [[2, 'desc']], // Sort by count
+			columns: [
+				{ title: "#", orderable: false },
+				{ title: "Patron" },
+				{ title: "No of Requests" },
+				{ title: "Pending" },
+				{ title: "Approached" },
+				{ title: "Received" },
+				{ title: "Complete" },
+				{ title: "Closed" }
+			],
+			lengthMenu: [[5,10,25,50,-1],[5,10,25,50,"All"]],
+			pageLength: 5,
+			dom: 'Bflitp',
+			buttons: ['excelHtml5','csvHtml5','pdfHtml5']
+		});
+
+			// Filter form submit
+			$('#user-filter-form').on('submit', function(e){
+			e.preventDefault();
+			tableUsers.ajax.reload();
+		});
+
+			// Current month button
+			$('#user-current-month').on('click', function(){
+			const now = new Date(),
+					first = new Date(now.getFullYear(), now.getMonth(), 1),
+					last = new Date(now.getFullYear(), now.getMonth()+1, 0),
+					fmt = d => d.toISOString().slice(0,10);
+			$('input[name="user_date1"]').val(fmt(first));
+			$('input[name="user_date2"]').val(fmt(last));
+			tableUsers.ajax.reload();
+		});
+
+			// Clear filters button
+			$('#user-clear-filters').on('click', function(){
+			$('input[name="user_date1"]').val('');
+			$('input[name="user_date2"]').val('');
+			tableUsers.ajax.reload();
+		});
+
+		const deliveryTable = $('#table_delivery').DataTable({
+			processing: true,
+			serverSide: true,
+			searching: false,
+			ordering: false,
+			ajax: {
+				url: 'serverside/table_delivery_time.php',
+				type: 'POST',
+				data: function (d) {
+				d.del_date1 = $('input[name="del_date1"]').val();
+				d.del_date2 = $('input[name="del_date2"]').val();
+				}
+			},
+			columns: [
+				{ data: 'range' },
+				{ data: 'count' }
+			],
+			paging: false,
+			info: false,
+			dom: 'Bfrtip',
+			buttons: ['excelHtml5', 'csvHtml5', 'pdfHtml5']
+		});
+
+			// Filter
+			$('#delivery_submit').on('click', function (e) {
+			e.preventDefault();
+			deliveryTable.draw();
+		});
+
+			// Current Month
+			$('#delivery_month').on('click', function (e) {
+			e.preventDefault();
+			const now = new Date();
+			const first = new Date(now.getFullYear(), now.getMonth(), 1);
+			const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+			$('input[name="del_date1"]').val(first.toISOString().split('T')[0]);
+			$('input[name="del_date2"]').val(last.toISOString().split('T')[0]);
+			deliveryTable.draw();
+		});
+
+			// Clear Filters
+			$('#delivery_clear').on('click', function (e) {
+			e.preventDefault();
+			$('input[name="del_date1"]').val('');
+			$('input[name="del_date2"]').val('');
+			deliveryTable.draw();
+		});
+
+
+		const table_discipline = $('#table_discipline').DataTable({
+			processing: true,
+			serverSide: true,
+			ajax: {
+			url: 'serverside/table_discipline.php',
+			type: 'POST',
+			data: function (d) {
+				d.date1 = $('#date1_discipline').val();
+				d.date2 = $('#date2_discipline').val();
+			}
+			},
+			columns: [
+				{ data: 0, orderable: false },
+				{ data: 1 }, // Discipline
+				{ data: 2 }, // Count
+				{ data: 3, orderable: false },
+				{ data: 4, orderable: false },
+				{ data: 5, orderable: false },
+				{ data: 6, orderable: false },
+				{ data: 7, orderable: false }
+			],
+			order: [[2, 'desc']],
+			lengthMenu: [[5,10,25,50,-1],[5,10,25,50,"All"]],
+			pageLength: 5,
+			dom: 'Bflitp',
+			buttons: ['excelHtml5', 'csvHtml5', 'pdfHtml5'] 
+		});
+
+		$('#filter_discipline').on('submit', function (e) {
+			e.preventDefault();
+			table_discipline.draw();
+		});
+
+		$('#clear_discipline').on('click', function () {
+			$('#date1_discipline').val('');
+			$('#date2_discipline').val('');
+			table_discipline.draw();
+		});
+
+		$('#current_month_discipline').on('click', function () {
+			const now = new Date();
+			const first = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+			const last = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+			$('#date1_discipline').val(first);
+			$('#date2_discipline').val(last);
+			table_discipline.draw();
+		});
+
+    // Modal trigger (customize if needed)
+    $(document).on('click', '.view_data', function () {
+      $.ajax({
+        url: "", // Add your backend script URL here
+        method: "POST",
+        data: {}, // Add data to send
+        success: function (data) {
+          $('#employee_detail').html(data);
+          $('#dataModal').modal('show');
+        }
+      });
+    });
+  });
 </script>
-<br/><br/>
+
         <!-- page content -->
-        <div class="right_col" role="main">
-          <!-- top tiles -->
-          <div class="row tile_count">
-            <div class="col-md-2 col-sm-3 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-plus-circle"></i> Total Entries</span>
-              <div class="count"><?php echo"$sql12"?></div>
-              
-            </div>
-            <div class="col-md-2 col-sm-3 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-clock-o"></i>Total Pending</span>
-              <div class="count red"><?php echo"$sql22"?></div>
-                 </div>
-            <div class="col-md-2 col-sm-3 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-arrow-circle-right"></i> Total Approached</span>
-              <div class="count aero"><?php echo"$sql32"?></div>
-             
-            </div>
-            <div class="col-md-2 col-sm-3 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-check-circle"></i> Total Completed</span>
-              <div class="count green"><?php echo"$sql42"?></div>
-             
-            </div>
-            <div class="col-md-2 col-sm-3 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-window-close"></i> Total Closed</span>
-              <div class="count blue"><?php echo"$sql52"?></div>
-             
-            </div>
-            <div class="col-md-1 col-sm-3 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user"></i> Total Faculty</span>
-              <div class="count"><?php echo"$sql62"?></div>
-              
-            </div>
-			<div class="col-md-1 col-sm-3 col-xs-6 tile_stats_count">
-              <span class="count_top"><i class="fa fa-user"></i> Total Students</span>
-              <div class="count"><?php echo"$sql72"?></div>
-              
-            </div>
-          </div>
+		<div id="container" class="container-fluid mt-3 pt-4">
+		<div class="row g-3">
+			<div class="col-6 col-md-2">
+			<div class="p-3 bg-light border rounded text-center">
+				<div class="text-muted"><i class="fa fa-plus-circle"></i> Total Entries</div>
+				<div class="fs-5 fw-bold"><?= $status_counts['Total'] ?></div>
+			</div>
+			</div>
+			<div class="col-6 col-md-2">
+			<div class="p-3 bg-light border rounded text-center">
+				<div class="text-muted"><i class="fa fa-clock"></i> Pending</div>
+				<div class="fs-5 fw-bold text-danger"><?= $status_counts['Pending'] ?></div>
+			</div>
+			</div>
+			<div class="col-6 col-md-2">
+			<div class="p-3 bg-light border rounded text-center">
+				<div class="text-muted"><i class="fa fa-arrow-circle-right"></i> Approached</div>
+				<div class="fs-5 fw-bold text-info"><?= $status_counts['Approached'] ?></div>
+			</div>
+			</div>
+			<div class="col-6 col-md-2">
+			<div class="p-3 bg-light border rounded text-center">
+				<div class="text-muted"><i class="fa fa-clock"></i> Received</div>
+				<div class="fs-5 fw-bold text-danger"><?= $status_counts['Received'] ?></div>
+			</div>
+			</div>
+			<div class="col-6 col-md-2">
+			<div class="p-3 bg-light border rounded text-center">
+				<div class="text-muted"><i class="fa fa-check-circle"></i> Completed</div>
+				<div class="fs-5 fw-bold text-success"><?= $status_counts['Complete'] ?></div>
+			</div>
+			</div>
+			<div class="col-6 col-md-2">
+			<div class="p-3 bg-light border rounded text-center">
+				<div class="text-muted"><i class="fa fa-window-close"></i> Closed</div>
+				<div class="fs-5 fw-bold text-primary"><?= $status_counts['Closed'] ?></div>
+			</div>
+			</div>
+			<div class="row row-cols-2 row-cols-md-4 g-3 align-items-stretch">
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+					<div class="text-muted"><i class="fa fa-user"></i> Students</div>
+					<div class="fs-5 fw-bold"><?= $category_counts['Student'] ?? 0 ?></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+					<div class="text-muted"><i class="fa fa-user"></i> Faculty</div>
+					<div class="fs-5 fw-bold"><?= $category_counts['Faculty'] ?? 0 ?></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+					<div class="text-muted"><i class="fa fa-user"></i> Staff</div>
+					<div class="fs-5 fw-bold"><?= $category_counts['Staff'] ?? 0 ?></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+					<div class="text-muted"><i class="fa fa-user"></i> Alumni</div>
+					<div class="fs-5 fw-bold"><?= $category_counts['Alumni'] ?? 0 ?></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+					<div class="text-muted"><i class="fa fa-user"></i> Individual Memberships</div>
+					<div class="fs-5 fw-bold"><?= $category_counts['Individual Membership'] ?? 0 ?></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+					<div class="text-muted"><i class="fa fa-user"></i> Institute Members</div>
+					<div class="fs-5 fw-bold"><?= $category_counts['Institute Member'] ?? 0 ?></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+						<div class="text-muted"><i class="fa fa-user"></i> Corporate Members</div>
+						<div class="fs-5 fw-bold"><?= $category_counts['Corporate Member'] ?? 0 ?></div>
+					</div>
+				</div>
+				<div class="col">
+					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
+					<div class="text-muted"><i class="fa fa-user"></i> Other Institutions</div>
+					<div class="fs-5 fw-bold"><?= $category_counts['Other Institution'] ?? 0 ?></div>
+					</div>
+				</div>
+				</div>
+			</div>
+		</div>
+
           <!-- /top tiles -->
 
           <div class="row">
             <div class="col-md-12 col-sm-12 col-xs-12">
-              <div class="dashboard_graph">
+              <div class="dashboard_graph mt-3">
 
-                <div class="row x_title">
-                  <div class="col-md-6">
-                    
-                  </div>
-                  <div class="col-md-6">
-<!-- 
- <form method="post" action="" >
-		
-		<input type="radio" name="category" value="Faculty" checked> Faculty
-		<input type="radio" name="category" value="Student"> Student
-		
-		<select name="type">
-		<option value="Pending">Pending</option>
-		<option value="Approached">Approached</option>
-		<option value="Complete">Complete</option>
-		<option value="Closed">Closed</option>
-		
-				
-		</select>
-		
-		
+<?php
+$statuses = ['Pending', 'Approached', 'Received', 'Complete', 'Closed'];
+$data = []; // Final output structure: $data[patron_type][status] = count
 
-        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-        <input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
-
-		
-          <button type="submit" name="submit" class="btn btn-default">
-            <i class="glyphicon glyphicon-search"></i>
-          </button>
-		 
-		  </form>
-		  -->
-                    </div>
-                  </div>
-<?php 
-	if(isset($_POST['user_submit'])){
-		$date1=$_POST['date1'];
-		$date2=$_POST['date2'];
-		$r1=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Req_date between '$date1' and '$date2'");
-$r2=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Pending' and Req_date between '$date1' and '$date2'");
-$r3=mysqli_query($conn,"select Sr_no from entry where Category='Student' and Status='Approached' and Req_date between '$date1' and '$date2'");
-$r4=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Complete' and Req_date between '$date1' and '$date2'");
-$r5=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Closed' and Req_date between '$date1' and '$date2'");
-$R1=mysqli_num_rows($r1);
-$R2=mysqli_num_rows($r2);
-$R3=mysqli_num_rows($r3);
-$R4=mysqli_num_rows($r4);
-$R5=mysqli_num_rows($r5);
-/* faculty */
-$s1=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Req_date between '$date1' and '$date2'");
-$s2=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Pending' and Req_date between '$date1' and '$date2'");
-$s3=mysqli_query($conn,"select Sr_no from entry where Category='Faculty' and Status='Approached' and Req_date between '$date1' and '$date2'");
-$s4=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Complete' and Req_date between '$date1' and '$date2'");
-$s5=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Closed' and Req_date between '$date1' and '$date2'");
-$S1=mysqli_num_rows($s1);
-$S2=mysqli_num_rows($s2);
-$S3=mysqli_num_rows($s3);
-$S4=mysqli_num_rows($s4);
-$S5=mysqli_num_rows($s5);
-/* other institutions */
-$t1=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Req_date between '$date1' and '$date2'");
-$t2=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Pending' and Req_date between '$date1' and '$date2'");
-$t3=mysqli_query($conn,"select Sr_no from entry where Category='Other Institutions' and Status='Approached'and Req_date between '$date1' and '$date2'");
-$t4=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Complete'and Req_date between '$date1' and '$date2'");
-$t5=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Closed'and Req_date between '$date1' and '$date2'");
-$T1=mysqli_num_rows($t1);
-$T2=mysqli_num_rows($t2);
-$T3=mysqli_num_rows($t3);
-$T4=mysqli_num_rows($t4);
-$T5=mysqli_num_rows($t5);
-/* Corporate Members */
-$u1=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members'and Req_date between '$date1' and '$date2'");
-$u2=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Pending'and Req_date between '$date1' and '$date2'");
-$u3=mysqli_query($conn,"select Sr_no from entry where Category='Corporate Members' and Status='Approached' and Req_date between '$date1' and '$date2'");
-$u4=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Complete'and Req_date between '$date1' and '$date2'");
-$u5=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Closed'and Req_date between '$date1' and '$date2'");
-$U1=mysqli_num_rows($u1);
-$U2=mysqli_num_rows($u2);
-$U3=mysqli_num_rows($u3);
-$U4=mysqli_num_rows($u4);
-$U5=mysqli_num_rows($u5);
-/* Institution members */
-$v1=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members'and Req_date between '$date1' and '$date2'");
-$v2=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Pending'and Req_date between '$date1' and '$date2'");
-$v3=mysqli_query($conn,"select Sr_no from entry where Category='Institute Members' and Status='Approached'and Req_date between '$date1' and '$date2'");
-$v4=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Complete'and Req_date between '$date1' and '$date2'");
-$v5=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Closed'and Req_date between '$date1' and '$date2'");
-$V1=mysqli_num_rows($v1);
-$V2=mysqli_num_rows($v2);
-$V3=mysqli_num_rows($v3);
-$V4=mysqli_num_rows($v4);
-$V5=mysqli_num_rows($v5);
-
-	
-	
-	
-	
-	
-	}
-
-else{
-
-$r1=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r2=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r3=mysqli_query($conn,"select Sr_no from entry where Category='Student' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r4=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$r5=mysqli_query($conn,"select Sr_no from entry  where Category='Student' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$R1=mysqli_num_rows($r1);
-$R2=mysqli_num_rows($r2);
-$R3=mysqli_num_rows($r3);
-$R4=mysqli_num_rows($r4);
-$R5=mysqli_num_rows($r5);
-/* faculty */
-$s1=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s2=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s3=mysqli_query($conn,"select Sr_no from entry where Category='Faculty' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s4=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$s5=mysqli_query($conn,"select Sr_no from entry  where Category='Faculty' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$S1=mysqli_num_rows($s1);
-$S2=mysqli_num_rows($s2);
-$S3=mysqli_num_rows($s3);
-$S4=mysqli_num_rows($s4);
-$S5=mysqli_num_rows($s5);
-/* other institutions */
-$t1=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t2=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t3=mysqli_query($conn,"select Sr_no from entry where Category='Other Institutions' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t4=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$t5=mysqli_query($conn,"select Sr_no from entry  where Category='Other Institutions' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$T1=mysqli_num_rows($t1);
-$T2=mysqli_num_rows($t2);
-$T3=mysqli_num_rows($t3);
-$T4=mysqli_num_rows($t4);
-$T5=mysqli_num_rows($t5);
-/* Corporate Members */
-$u1=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u2=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u3=mysqli_query($conn,"select Sr_no from entry where Category='Corporate Members' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u4=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$u5=mysqli_query($conn,"select Sr_no from entry  where Category='Corporate Members' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$U1=mysqli_num_rows($u1);
-$U2=mysqli_num_rows($u2);
-$U3=mysqli_num_rows($u3);
-$U4=mysqli_num_rows($u4);
-$U5=mysqli_num_rows($u5);
-/* Institution members */
-$v1=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v2=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Pending'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v3=mysqli_query($conn,"select Sr_no from entry where Category='Institute Members' and Status='Approached'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v4=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Complete'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$v5=mysqli_query($conn,"select Sr_no from entry  where Category='Institute Members' and Status='Closed'and MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)");
-$V1=mysqli_num_rows($v1);
-$V2=mysqli_num_rows($v2);
-$V3=mysqli_num_rows($v3);
-$V4=mysqli_num_rows($v4);
-$V5=mysqli_num_rows($v5);
-}
-?>	
-			  
-<?php 
-
-if(isset($_POST['submit'])){
-	
-	$category=$_POST['category'];
-	$status=$_POST['type'];
-	$date1=$_POST['date1'];
-	$date2=$_POST['date2'];
-	if($date1!='' && $date2!=''){
-	$sqla=mysqli_query($conn,"select * from entry where Category='$category' and Status='$status' and Req_date between '$date1' and '$date2' ");
-	$sql1count=mysqli_num_rows($sqla);
-	}
-	else{
-	$sqla=mysqli_query($conn,"select * from entry where Category='$category' and Status='$status'");
-	$sql1count=mysqli_num_rows($sqla);
-
-	}
-	
+// Choose date condition
+if (isset($_POST['user_submit'])) {
+	$date1 = $_POST['date1'];
+	$date2 = $_POST['date2'];
+	$date_condition = "Req_date BETWEEN '$date1' AND '$date2'";
+} else {
+	$date_condition = "MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE)";
 }
 
+// Fetch all patron types
+$types_result = mysqli_query($conn, "SELECT Patron_type FROM patron_type");
+while ($row = mysqli_fetch_assoc($types_result)) {
+	$type = $row['Patron_type'];
+	
+	// Get total for this type
+	$total_query = mysqli_query($conn, "SELECT COUNT(*) as cnt FROM entry WHERE Category='$type' AND $date_condition");
+	$total = mysqli_fetch_assoc($total_query)['cnt'];
+	$data[$type]['Total'] = $total;
 
-
+	// For each status
+	foreach ($statuses as $status) {
+		$status_query = mysqli_query($conn, "SELECT COUNT(*) as cnt FROM entry WHERE Category='$type' AND Status='$status' AND $date_condition");
+		$count = mysqli_fetch_assoc($status_query)['cnt'];
+		$data[$type][$status] = $count;
+	}
+}
 ?>
+
 <?php 
 	if(isset($_POST['submit'])){ 
 ?>
    <h3> Report:</h3>
   
-	<div class="row">
-	<div class="col-md-6">
-	From:<span class="badge"><?php echo"$date1" ?></span> <br/>To:<span class="badge"><?php echo"$date2" ?> </span><br/>
-	Status:<span class="badge"><?php echo"$status" ?> </span>
-	</div>
-	<div class="col-md-6">
-	Count:<span class="badge"><?php echo"$sql1count" ?></span> <br/>
-	Category:<span class="badge"><?php echo"$category" ?></span> <br/>
-	</div>
-	</div>
-	<?php } ?>	
-<!--- new thing-->
-            <div class="row">
-              
-               <div class="panel-group">
-				<div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Request by Category 
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
+		<div class="row">
+		<div class="col-md-6">
+		From:<span class="badge"><?php echo"$date1" ?></span> <br/>To:<span class="badge"><?php echo"$date2" ?> </span><br/>
+		Status:<span class="badge"><?php echo"$status" ?> </span>
+		</div>
+		<div class="col-md-6">
+		Count:<span class="badge"><?php echo"$sql1count" ?></span> <br/>
+		Category:<span class="badge"><?php echo"$category" ?></span> <br/>
+		</div>
+		</div>
+		<?php } ?>	
+	<!--- new thing-->
+<div class="container-fluid py-4">
 
-		
-						<button type="submit" name="user_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-				</div>
-				</div>
-				</div>
-				<div class="panel-body">
-					<table id="employee_data3" class="table">
-					<thead>
-						<tr>
-							<th>Category</th>
-							<th>Total</th>
-							<th>Pending</th>
-							<th>Approached</th>
-							<th>Complete</th>
-							<th>Closed</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Student</td>
-							<td><?php echo"$R1"; ?></td>
-							<td><?php echo"$R2"; ?></td>
-							<td><?php echo"$R3"; ?></td>
-							<td><?php echo"$R4"; ?></td>
-							<td><?php echo"$R5"; ?></td>
-						</tr>
-						<tr>
-							<td>Faculty</td>
-							<td><?php echo"$S1"; ?></td>
-							<td><?php echo"$S2"; ?></td>
-							<td><?php echo"$S3"; ?></td>
-							<td><?php echo"$S4"; ?></td>
-							<td><?php echo"$S5"; ?></td>
-						</tr>
-						<tr>
-							<td>Other Institutions</td>
-							<td><?php echo"$T1"; ?></td>
-							<td><?php echo"$T2"; ?></td>
-							<td><?php echo"$T3"; ?></td>
-							<td><?php echo"$T4"; ?></td>
-							<td><?php echo"$T5"; ?></td>
-						</tr>
-						<tr>
-							<td>Corporate Members</td>
-							<td><?php echo"$U1"; ?></td>
-							<td><?php echo"$U2"; ?></td>
-							<td><?php echo"$U3"; ?></td>
-							<td><?php echo"$U4"; ?></td>
-							<td><?php echo"$U5"; ?></td>
-						</tr>
-						<tr>
-							<td>Institute Members</td>
-							<td><?php echo"$V1"; ?></td>
-							<td><?php echo"$V2"; ?></td>
-							<td><?php echo"$V3"; ?></td>
-							<td><?php echo"$V4"; ?></td>
-							<td><?php echo"$V5"; ?></td>
-						</tr>
-					</tbody>
-					
-					
-					
-					</table>
-				
-				
-				
-				
-				</div>
-			   </div>
-                </div>
-              </div>
-
-			  <div class="row">
-			 <div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Request by Journals
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
-
-		
-						<button type="submit" name="journal_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-				</div>
-				</div>
-
-				</div>
-				<div class="panel-body">
-				<table id="employee_data" class="table">
-				<thead>
-				<th>Sno</th>
-				<th>Journal Name</th>
-				<th>Count</th>
-				<th>Pending</th>
-				<th>Approached</th>
-				<th>Complete</th>
-				<th>Closed</th>
-				</thead>
-				<?php 
-				if(isset($_POST['journal_submit'])){
-					$date1=$_POST['date1'];
-					$date2=$_POST['date2'];
-					$trunc=mysqli_query($conn,"truncate table report_journal");
-					$j1=mysqli_query($conn,"select Journal_name,count(*) as count from entry where Req_date between '$date1' and '$date2' group by Journal_name order by Journal_name");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						$journal=$row['Journal_name'];
-						$count=$row['count'];
-						$sql2=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Journal_name='$journal' and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Journal_name='$journal' and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Journal_name='$journal' and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Journal_name='$journal' and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-						$journal=mysqli_query($conn,"insert into report_journal (Journal_name,Count) values('$journal','$count')");
-					?>										
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$row[Journal_name]";?></td>
-					<td><?php echo"$count";?></td>
-					<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-					</tr>
-					
-					<?php 
-					}
-				}
-				
-				else
-				{
-					$trunc=mysqli_query($conn,"truncate table report_journal");
-					$j1=mysqli_query($conn,"select Journal_name,count(*) as count from entry  WHERE MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) group by Journal_name order by Journal_name");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						
-						$journal=$row['Journal_name'];
-						$count=$row['count'];
-						$sql2=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Journal_name='$journal' and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Journal_name='$journal' and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Journal_name='$journal' and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Journal_name='$journal' and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-						$journal=mysqli_query($conn,"insert into report_journal (Journal_name,Count) values('$journal','$count')");
-					?>
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$row[Journal_name]";?></td>
-					<td><?php echo"$count";?></td>
-					<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-					</tr>
-					
-					<?php 
-					}
-				}
-				
-				?>
-				</table>
-				</div>
-				</div>
-				</div>
-				
-				<div class="row">
-				<!-- second col-->
-				
-				
-				<div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Request by Libraries
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
-
-		
-						<button type="submit" name="institute_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-				</div>
-				</div>
-
-				</div>
-
-				
-				<div class="panel-body">
-				<table id="employee_data1" class="table">
-				<thead>
-				
-				<th>Institute Name</th>
-				<th>Send Count</th>
-				<th>Receive Count</th>
-				</thead>
-				<tbody>
-				<?php 
-				if(isset($_POST['institute_submit'])){
-					$date1=$_POST['date1'];
-					$date2=$_POST['date2'];
-				$sql=mysqli_query($conn,"select * from institutions");
-							 while($row=mysqli_fetch_array($sql)){
-								 
-	 $a=$row["institute_name"];
-	 $a1=$row["Sr_no"];
-	 
-	 $req_inst=mysqli_query($conn,"select * from institute_list where institute_name='$a1' and req_date between '$date1' and '$date2'");
-	 $req_count=mysqli_num_rows($req_inst);
-	 $rec_inst=mysqli_query($conn,"select * from receive_list where institute_name='$a1'and req_date between '$date1' and '$date2'");
-	 $rec_count=mysqli_num_rows($rec_inst);
-	$update=mysqli_query($conn,"update institutions set send_count='$req_count' , receive_count='$rec_count' where institute_name='$a'");
-		  ?>
-		  
-	 <tr>
-	 <td><?php echo"$a";?></td>
-	 <td><?php echo"$req_count";?></td>
-	 <td><?php echo"$rec_count";?></td>
-	 </tr>
-				<?php }} 
-			
-		
-			else
-			{
-					
-	$sql=mysqli_query($conn,"select * from institutions");
-	 while($row=mysqli_fetch_array($sql)){
-								 
-	 $a=$row["institute_name"];
-	 $a1=$row["Sr_no"];
-	 $req_inst=mysqli_query($conn,"select * from institute_list where institute_name='$a1' and MONTH(req_date) = MONTH(CURRENT_DATE) AND YEAR(req_date) = YEAR(CURRENT_DATE)");
-	 $req_count=mysqli_num_rows($req_inst);
-	 $rec_inst=mysqli_query($conn,"select * from receive_list where institute_name='$a1'and MONTH(req_date) = MONTH(CURRENT_DATE) AND YEAR(req_date) = YEAR(CURRENT_DATE)");
-	 $rec_count=mysqli_num_rows($rec_inst);
-	$update=mysqli_query($conn,"update institutions set send_count='$req_count' , receive_count='$rec_count' where institute_name='$a'");
-	?>
+	<!-- Request by Category -->
+	<div class="card shadow mb-4">
+		<div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+		<h5 class="mb-0">Requests by Category</h5>
+		<form class="d-flex gap-2" id="category-filter-form">
+			<input type="date" class="form-control form-control-sm" name="date1">
+			<input type="date" class="form-control form-control-sm" name="date2">
+			<button type="submit" name="user_submit" class="btn btn-light btn-sm">
+			<i class="fas fa-search"></i>
+			</button>
+			<button type="button" id="currentMonthBtn" class="btn btn-secondary btn-sm">
+				Current Month
+			</button>
+			<button type="button" id="clearFiltersBtn" class="btn btn-secondary btn-sm bg-red">
+				Clear Filters
+			</button>
+		</form>
+		</div>
+		<div class="card-body">
+		<table id="table_category" class="table table-bordered table-hover table-sm" style="width:100%">
+		<thead class="table-light">
 			<tr>
-	 <td><?php echo"$a";?></td>
-	 <td><?php echo"$req_count";?></td>
-	 <td><?php echo"$rec_count";?></td>
-	 </tr>		
-	 <?php	}	}
-	?>
- 	
-	
+			<th>Category</th>
+			<th>Total</th>
+			<th>Pending</th>
+			<th>Approached</th>
+			<th>Received</th>
+			<th>Complete</th>
+			<th>Closed</th>
+			</tr>
+		</thead>
+		</table>
+		</div>
+	</div>
 
-		</tbody>
-	</table>		
-				
-				
-				
-				
-				
-				
-				</div>
-				
-			</div>
-			</div>
-			
-<!-- next col -->
-			  <div class="row">
-			 <div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Request by Document Type
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
-
-		
-						<button type="submit" name="doctype_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-				</div>
-				</div>
-
-				</div>
-				<div class="panel-body">
-				<table id="employee_data9" class="table">
-				<thead>
-				<th>Sno</th>
-				<th>Document Type</th>
-				<th>Count</th>
+	<!-- Request by Journals -->
+	<div class="card shadow mb-4">
+		<div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+			<h5 class="mb-0">Requests by Journal</h5>
+			<form class="d-flex gap-2" id="journal-filter-form">
+				<input type="date" class="form-control form-control-sm" name="journal_date1">
+  				<input type="date" class="form-control form-control-sm" name="journal_date2">
+				<button type="submit" class="btn btn-light btn-sm">
+					<i class="fas fa-search"></i>
+				</button>
+				<button type="button" class="btn btn-secondary btn-sm" id="journal-current-month">
+					Current Month
+				</button>
+				<button type="button" class="btn btn-secondary btn-sm" id="journal-clear-filters">
+					Clear Filters
+				</button>
+			</form>
+		</div>
+		<div class="card-body">
+			<table id="table_journals" class="table table-bordered table-hover table-sm w-100">
+			<thead class="table-light">
+				<tr>
+				<th>#</th>
+				<th>Journal Name</th>
+				<th>No of Requests</th>
 				<th>Pending</th>
 				<th>Approached</th>
+				<th>Received</th>
 				<th>Complete</th>
 				<th>Closed</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- Request by Libraries -->
+	<div class="card shadow mb-4">
+		<div class="card-header d-flex justify-content-between align-items-center bg-warning text-dark">
+		<h5 class="mb-0">Requests by Libraries</h5>
+		<form class="d-flex gap-2" id="library-filter-form">
+			<input type="date" class="form-control form-control-sm" name="lib_date1">
+			<input type="date" class="form-control form-control-sm" name="lib_date2">
+			<button type="submit" name="institute_submit" class="btn btn-light btn-sm">
+			<i class="fas fa-search"></i>
+			</button>
+			<button type="button" id="library-current-month" class="btn btn-secondary btn-sm">
+				Current Month
+			</button>
+			<button type="button" id="library-clear-filters" class="btn btn-secondary btn-sm">
+				Clear Filters
+			</button>
+		</form>
+		</div>
+		<div class="card-body">
+		<table id="table_libraries" class="table table-bordered table-hover table-sm">
+			<thead class="table-light">
+			<tr><th>Institute Name</th><th>No of Requests Sent</th><th>Receive Count</th></tr>
+			</thead>
+		</table>
+		</div>
+		<div id="library-totals" class="mt-1 text-center fw-semibold text-secondary" style="font-size: 0.95rem;">
+			Total Requests Sent: <span id="total-sent">0</span> |
+			Total Received: <span id="total-received">0</span>
+		</div>
+	</div>
+	
+	<!-- Request by Document Type -->
+		<div class="card shadow mb-4">
+			<div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+				<h5 class="mb-0">Requests by Document Type</h5>
+				<form class="d-flex gap-2" id="doctype-filter-form">
+				<input type="date" class="form-control form-control-sm" name="doctype_date1">
+  				<input type="date" class="form-control form-control-sm" name="doctype_date2">
+				<button type="submit" class="btn btn-light btn-sm">
+					<i class="fas fa-search"></i>
+				</button>
+				<button type="button" id="doctype-current-month" class="btn btn-secondary btn-sm">
+					Current Month
+				</button>
+				<button type="button" id="doctype-clear-filters" class="btn btn-secondary btn-sm">
+					Clear Filters
+				</button>
+				</form>
+			</div>
+			<div class="card-body">
+				<table id="table_doctype" class="table table-bordered table-hover table-sm w-100">
+				<thead class="table-light">
+					<tr>
+					<th>#</th>
+					<th>Document Type</th>
+					<th>No of Requests</th>
+					<th>Pending</th>
+					<th>Approached</th>
+					<th>Received</th>
+					<th>Complete</th>
+					<th>Closed</th>
+					</tr>
 				</thead>
-				<?php 
-				if(isset($_POST['doctype_submit'])){
-					$date1=$_POST['date1'];
-					$date2=$_POST['date2'];
-					
-					$j1=mysqli_query($conn,"select Document_type,count(*) as count from entry where Req_date between '$date1' and '$date2' group by Document_type order by Document_type");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						$doctype=$row['Document_type'];
-						$count=$row['count'];
-						$sql2=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Document_type='$doctype' and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Document_type='$doctype' and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Document_type='$doctype' and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Document_type='$doctype' and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-						
-					?>										
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$row[Document_type]";?></td>
-					<td><?php echo"$count";?></td>
-					<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-					</tr>
-					
-					<?php 
-					}
-				}
-				
-				else
-				{
-					
-					$j1=mysqli_query($conn,"select Document_type,count(*) as count from entry  WHERE MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) group by Document_type order by Document_type");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						
-						$doctype=$row['Document_type'];
-						$count=$row['count'];
-						$sql2=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Document_type='$doctype' and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Document_type='$doctype' and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Document_type='$doctype' and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Document_type='$doctype' and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-						
-					?>
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$row[Document_type]";?></td>
-					<td><?php echo"$count";?></td>
-					<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-					</tr>
-					
-					<?php 
-					}
-				}
-				
-				?>
+				<tbody></tbody>
 				</table>
-				</div>
-				</div>
-				</div>
-			
-			<div class="row">
-			
-			<div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Request by Users
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
+			</div>
+		</div>
 
-		
-						<button type="submit" name="user_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
+	
+	<!-- Request by Patrons -->
+		<div class="card shadow mb-4">
+			<div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+				<h5 class="mb-0">Requests by Patrons</h5>
+				<form id="user-filter-form" class="d-flex gap-2 ">
+				<input type="date" name="user_date1" class="form-control form-control-sm">
+				<input type="date" name="user_date2" class="form-control form-control-sm">
+				<button type="submit" class="btn btn-light btn-sm"><i class="fas fa-search"></i></button>
+				<button type="button" id="user-current-month" class="btn btn-secondary btn-sm">
+					Current Month
+				</button>
+				<button type="button" id="user-clear-filters" class="btn btn-secondary btn-sm">
+					Clear Filters
+				</button>
 				</form>
-				</div>
-				</div>
-				</div>
-				<div class="panel-body">
-				<table id="employee_data2" class="table">
-				<thead>
-				
-				<th>Sno</th>
-				<th>Patron</th>
-				<th>Count</th>
-				<th>Pending</th>
-				<th>Approached</th>
-				<th>Complete</th>
-				<th>Closed</th>
-				</thead>
-				<tbody>
-				<?php 
-				if(isset($_POST['user_submit'])){
-					$date1=$_POST['date1'];
-					$date2=$_POST['date2'];
-                $i=0;          
-				$sql=mysqli_query($conn,"select Req_by,count(Req_by) as count from entry where Req_date between '$date1' and '$date2' group by Req_by order by Req_by");
-							 while($row=mysqli_fetch_array($sql)){
-								$req_by=$row['Req_by'];
-								$req=mysqli_query($conn,"select Display_name from patrons where Sr_no='$req_by'");
-								$row1=mysqli_fetch_array($req);
-								$req_by1=$row1['Display_name'];
-								$a=$req_by1;
-								$i++;
-								$b=$row["count"];
-								$sql2=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Req_by='$req_by' and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Req_by='$req_by' and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Req_by='$req_by' and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select Sr_no from entry where Req_date between '$date1' and '$date2' and Req_by='$req_by' and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-	 
-	 
-						?>
-				<tr>
-				<td><?php echo"$i";?></td>
-				<td><?php echo"$a";?></td>
-				<td><?php echo"$b";?></td>
-				<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-	 
-				</tr>
-	
-				<?php
-				}}
-
-				else{
-		         $i=0;          
-				$sql=mysqli_query($conn,"select Req_by,count(*) as count from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) group by Req_by order by Req_by");
-				while($row=mysqli_fetch_array($sql)){
-				 $req_by=$row['Req_by'];
-								$req=mysqli_query($conn,"select Display_name from patrons where Sr_no='$req_by'");
-								$row1=mysqli_fetch_array($req);
-								$req_by1=$row1['Display_name'];
-								$a=$req_by1;
-				$i++;
-				$b=$row["count"];
-				$sql2=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Req_by='$req_by' and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Req_by='$req_by' and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Req_by='$req_by' and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select Sr_no from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and Req_by='$req_by' and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-	 
-				?>
-				<tr>
-				<td><?php echo"$i";?></td>
-				<td><?php echo"$a";?></td>
-				<td><?php echo"$b";?></td>
-				<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-	 
-				</tr>
-	
-				<?php
-				}
-				}	
-
-				?>
-		</tbody>
-	</table>		
-					</div>
 			</div>
-			
-			
+			<div class="card-body">
+				<table id="table_users" class="table table-bordered table-hover table-sm w-100">
+				<thead class="table-light"><tr>
+					<th>#</th><th>Patron</th><th>No of Requests</th>
+					<th>Pending</th><th>Approached</th><th>Received</th>
+					<th>Complete</th><th>Closed</th>
+				</tr></thead>
+				<tbody></tbody>
+				</table>
 			</div>
-<!-- next one -->
-			<div class="row">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Report on average time
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
+		</div>
 
-		
-						<button type="submit" name="average_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-				</div>
-				</div>
-				</div>
-				<div class="panel-body">
-				<table id="employee_data6" class="table">
-				<thead>
-				
-				<th>Sno</th>
-				<th>Patron</th>
-				
-				<th>No. of days</th>
-				</thead>
-				<tbody>
-				<?php 
-				if(isset($_POST['average_submit'])){
-					$date1=$_POST['date1'];
-					$date2=$_POST['date2'];
-				$i=0;          
-				$sql=mysqli_query($conn,"SELECT Req_by,DATEDIFF(`Sent_date`, `entry_date`) as diff from entry where Req_date between '$date1' and '$date2' ");
-				while($row=mysqli_fetch_array($sql)){
-						$req_by=$row['Req_by'];
-								$req=mysqli_query($conn,"select Display_name from patrons where Sr_no='$req_by'");
-								$row1=mysqli_fetch_array($req);
-								$req_by1=$row1['Display_name'];
-								$a=$req_by1;
-							$elapsed=$row['diff'];
-							$i++;	
-						?>
+<!-- Report on Average Time -->
+		<div class="card shadow mb-4">
+		<div class="card-header d-flex justify-content-between align-items-center bg-info text-white">
+			<h5 class="mb-0">Requests by Delivery Time</h5>
+			<form id="deliveryForm" class="d-flex gap-2 mb-0">
+			<input type="date" name="del_date1" class="form-control form-control-sm">
+			<input type="date" name="del_date2" class="form-control form-control-sm">
+			<button type="submit" class="btn btn-light btn-sm" id="delivery_submit">
+				<i class="fas fa-search"></i>
+			</button>
+			<button type="button" class="btn btn-secondary btn-sm" id="delivery_month">
+				Current Month
+			</button>
+			<button type="button" class="btn btn-secondary btn-sm" id="delivery_clear">
+				Clear Filters
+			</button>
+			</form>
+		</div>
+		<div class="card-body">
+			<table id="table_delivery" class="table table-bordered table-hover table-sm w-100">
+			<thead class="table-light">
 				<tr>
-				<td><?php echo"$i";?></td>
-				<td><?php echo"$a";?></td>
-				<td><?php echo"$elapsed";?></td>
-				
+				<th>Time Period (days)</th>
+				<th>No. of Requests</th>
 				</tr>
-	
-				<?php
-				}
-				}	
+			</thead>
+			</table>
+		</div>
+		</div>
 
-				
-				else{
-		         $i=0;          
-				$sql=mysqli_query($conn,"SELECT Req_by,DATEDIFF(`Sent_date`, `entry_date`) as diff from entry where  MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) ");
-				while($row=mysqli_fetch_array($sql)){
-						$req_by=$row['Req_by'];
-								$req=mysqli_query($conn,"select Display_name from patrons where Sr_no='$req_by'");
-								$row1=mysqli_fetch_array($req);
-								$req_by1=$row1['Display_name'];
-								$a=$req_by1;
-							$elapsed=$row['diff'];
-							$i++;	
-						?>
+
+<!-- Report on Discipline -->
+	<div class="card shadow mb-4">
+		<div class="card-header d-flex justify-content-between align-items-center bg-warning text-white">
+			<h5 class="mb-0">Requests by Department</h5>
+			<form id="filter_discipline" class="d-flex gap-2 mb-0">
+			<input type="date" id="date1_discipline" class="form-control form-control-sm">
+			<input type="date" id="date2_discipline" class="form-control form-control-sm">
+			<button type="submit" class="btn btn-light btn-sm" title="Filter">
+				<i class="fas fa-search"></i>
+			</button>
+			<button type="button" id="current_month_discipline" class="btn btn-secondary btn-sm" title="Current Month">
+				Current Month
+			</button>
+			<button type="button" id="clear_discipline" class="btn btn-secondary btn-sm" title="Clear Filters">
+				Clear Filters
+			</button>
+			</form>
+		</div>
+		<div class="card-body">
+			<table id="table_discipline" class="table table-bordered table-hover table-sm">
+			<thead class="table-light">
 				<tr>
-				<td><?php echo"$i";?></td>
-				<td><?php echo"$a";?></td>
-				<td><?php echo"$elapsed";?></td>
-				
-				</tr>
-	
-				<?php
-				}
-				}	
-
-				?>
-		</tbody>
-	</table>		
-					</div>
-			</div>
-			
-			
-			</div>
-<!-- next col -->
-			  <div class="row">
-			 <div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Request by Discipline
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
-
-		
-						<button type="submit" name="discipline_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-				</div>
-				</div>
-
-				</div>
-				<div class="panel-body">
-				<table id="employee_data7" class="table">
-				<thead>
 				<th>Sno</th>
 				<th>Discipline Name</th>
-				<th>Count</th>
+				<th>No of Requests</th>
 				<th>Pending</th>
 				<th>Approached</th>
+				<th>Received</th>
 				<th>Complete</th>
 				<th>Closed</th>
-				</thead>
-				<?php 
-				if(isset($_POST['discipline_submit'])){
-					$date1=$_POST['date1'];
-					$date2=$_POST['date2'];
-					
-					$j1=mysqli_query($conn,"select Discipline,count(*) as count,patrons.Sr_no as pat from entry,patrons where Req_date between '$date1' and '$date2'and entry.Req_by=patrons.Sr_no  group by Discipline order by Discipline");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						$discipline=$row['Discipline'];
-						if($discipline!=''){
-						$count=$row['count'];
-						$sr_no=$row['pat'];
-						
-						$sql2=mysqli_query($conn,"select * from entry where Req_date between '$date1' and '$date2' and entry.Req_by=$sr_no and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select * from entry where Req_date between '$date1' and '$date2' and entry.Req_by=$sr_no and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select * from entry where Req_date between '$date1' and '$date2' and entry.Req_by=$sr_no and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select * from entry where Req_date between '$date1' and '$date2' and entry.Req_by=$sr_no and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-						
-					?>										
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$row[Discipline]";?></td>
-					<td><?php echo"$count";?></td>
-					<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-					</tr>
-					
-					<?php 
-					}
-				}}
-				
-				else
-				{
-					
-					
-					$j1=mysqli_query($conn,"select Discipline,count(*) as count,patrons.Sr_no as pat from entry,patrons where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and entry.Req_by=patrons.Sr_no  group by Discipline order by Discipline");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						$discipline=$row['Discipline'];
-						if($discipline!=''){
-						$count=$row['count'];
-						$sr_no=$row['pat'];
-						$count=$row['count'];
-						$sql2=mysqli_query($conn,"select * from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and entry.Req_by=$sr_no and Status='Pending'");
-						$sql22=mysqli_num_rows($sql2);
-						$sql3=mysqli_query($conn,"select * from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and entry.Req_by=$sr_no and Status='Approached'");
-						$sql23=mysqli_num_rows($sql3);
-						$sql4=mysqli_query($conn,"select * from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and entry.Req_by=$sr_no and Status='Complete'");
-						$sql24=mysqli_num_rows($sql4);
-						$sql5=mysqli_query($conn,"select * from entry where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and entry.Req_by=$sr_no and Status='Closed'");
-						$sql25=mysqli_num_rows($sql5);
-						
+				</tr>
+			</thead>
+			</table>
+		</div>
+	</div>
 
-						
-						
-					?>										
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$discipline";?></td>
-					<td><?php echo"$count";?></td>
-					<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>
-					</tr>
-									
-					<?php 
-					}
-				}
-				}
-				?>
-				</table>
-				</div>
-				</div>
-				</div>
-					
-<!-- next col -->
-			  <div class="row">
-			 <div class="panel panel-default">
-				<div class="panel-heading">
-				<div class="row">
-				<div class="col-md-3">
-				Request by Program Name
-				</div>
-				<div class="col-md-9">
-				
-				<form method="post" action="">
-				        <input type="text" id="date" name="date1" placeholder="YYYY/MM/DD" >
-						<input type="text" id="date" name="date2" placeholder="YYYY/MM/DD" >
-
-		
-						<button type="submit" name="program_submit" class="btn btn-default">
-						<i class="glyphicon glyphicon-search"></i>
-						</button>
-				</form>
-				</div>
-				</div>
-
-				</div>
-				<div class="panel-body">
-				<table id="employee_data8" class="table">
-				<thead>
-				<th>Sno</th>
-				<th>Program Name</th>
-				<th>Count</th>
-				
-				</thead>
-				<?php 
-				if(isset($_POST['program_submit'])){
-					$date1=$_POST['date1'];
-					$date2=$_POST['date2'];
-					
-					$j1=mysqli_query($conn,"select Program_name,count(*) as count,patrons.Sr_no as pat from entry,patrons where Req_date between '$date1' and '$date2'and entry.Req_by=patrons.Sr_no  group by Program_name order by Program_name");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						$program=$row['Program_name'];
-						if($program!=''){
-						$count=$row['count'];
-						$sr_no=$row['pat'];
-					?>										
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$row[Program_name]";?></td>
-					<td><?php echo"$count";?></td>
-					
-					</tr>
-					
-					<?php 
-					}
-				}}
-				
-				else
-				{
-					
-					
-					$j1=mysqli_query($conn,"select Program_name,count(*) as count,patrons.Sr_no as pat from entry,patrons where MONTH(Req_date) = MONTH(CURRENT_DATE) AND YEAR(Req_date) = YEAR(CURRENT_DATE) and entry.Req_by=patrons.Sr_no  group by Program_name	order by Program_name");
-					$i=0;
-					while($row=mysqli_fetch_array($j1)){
-						$i++;
-						$program=$row['Program_name'];
-						if($program!=''){
-						$count=$row['count'];
-						$sr_no=$row['pat'];
-						$count=$row['count'];
-					
-					?>										
-					<tr>
-					<td><?php echo"$i";?></td>
-					<td><?php echo"$program";?></td>
-					<td><?php echo"$count";?></td>
-					
-					<!--<td><?php echo"$sql22";?></td>
-					<td><?php echo"$sql23";?></td>
-					<td><?php echo"$sql24";?></td>
-					<td><?php echo"$sql25";?></td>-->
-					</tr>
-									
-					<?php 
-					}
-				}
-				}
-				?>
-				</table>
-				</div>
-				</div>
-				</div>
-		
- 
-    <!-- Custom Theme Scripts -->
-    <script src="build/js/custom.min.js"></script>
+</div>				
 	
   </body>
 </html>
-<script>
-	$(document).ready(function(){  
-      
- }); 
-
-</script>

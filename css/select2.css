@@ -334,6 +334,7 @@
   border: none;
   outline: 0;
   box-shadow: none;
+  appearance: textfield;
   -webkit-appearance: textfield;
 }
 

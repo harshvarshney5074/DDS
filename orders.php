@@ -5,9 +5,8 @@ include('dbcon.php');
 include('checkUser.php');
 
 $query = "SELECT * FROM orders
-          WHERE sent != 1 
-            AND MONTH(date) = MONTH(CURRENT_DATE) 
-            AND YEAR(date) = YEAR(CURRENT_DATE)";
+          WHERE MONTH(date) = MONTH(CURRENT_DATE) 
+          AND YEAR(date) = YEAR(CURRENT_DATE)";
 
 $result = mysqli_query($conn, $query);
 
@@ -46,19 +45,26 @@ if (isset($_POST['date_submit'])) {
   <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
 
+  <style>
+    body {
+      background-color: lightblue;
+    }
+  </style>
+
 </head>
-<body class="bg-light">
+<body>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="index.php">IITGN</a>
+    <a class="navbar-brand" href="home.php">Home</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" 
       aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
         <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1'): ?>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -66,22 +72,21 @@ if (isset($_POST['date_submit'])) {
             </a>
             <ul class="dropdown-menu" aria-labelledby="manageDropdown">
               <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="journal/index.php">Journals</a></li>
+              <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
               <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a class="nav-link" href="biblo_search1.php">Search</a></li>
-          <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
         <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] == '0'): ?>
-          <li class="nav-item"><a class="nav-link" href="users/index.php">Settings</a></li>
+          <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
         <?php endif; ?>
       </ul>
 
       <form method="post" class="d-flex align-items-center" role="search" style="gap:0.5rem;">
-        <input type="date" name="date1" class="form-control form-control-sm" required />
-        <input type="date" name="date2" class="form-control form-control-sm" required />
+        <input type="date" name="date1" class="form-control form-control-sm" title="date1" required />
+        <input type="date" name="date2" class="form-control form-control-sm" title="date2" required />
         <button type="submit" name="date_submit" class="btn btn-outline-light btn-sm" title="Filter by date range">
           <i class="fas fa-filter"></i>
         </button>
@@ -99,7 +104,7 @@ if (isset($_POST['date_submit'])) {
 
 <!-- Main container -->
 <div class="container" style="margin-top: 80px; max-width: 900px;">
-  <h3 class="text-center mb-4">List of Basket</h3>
+  <h1 class="text-center mb-4">List of Requests</h1>
 
   <div class="table-responsive bg-white p-3 rounded shadow-sm">
     <table id="employee_data" class="table table-hover table-striped table-bordered align-middle">
@@ -116,26 +121,30 @@ if (isset($_POST['date_submit'])) {
       <tbody>
         <?php while ($row = mysqli_fetch_assoc($result)): ?>
         <?php
-          // Get total and complete entries for this order
           $order_id = $row['order_id'];
-          $entry_q = $conn->prepare("SELECT Status FROM entry WHERE Order_id = ?");
+          $entry_q = $conn->prepare("SELECT Status, sent_date FROM entry WHERE Order_id = ?");
           $entry_q->bind_param("s", $order_id);
           $entry_q->execute();
           $entry_result = $entry_q->get_result();
 
           $total = 0;
           $complete = 0;
+          $sent_complete = 0;
 
           while ($entry = $entry_result->fetch_assoc()) {
               if (in_array($entry['Status'], ['Pending', 'Approached', 'Received', 'Complete', 'Closed'])) {
                   $total++;
-                  if ($entry['Status'] === 'Complete') $complete++;
+                  if ($entry['Status'] === 'Complete') {
+                      $complete++;
+                      if ($entry['sent_date'] !== '0000-00-00 00:00:00' && $entry['sent_date'] !== null && $entry['sent_date'] !== '') {
+                          $sent_complete++;
+                      }
+                  }
               }
           }
 
           $entry_q->close();
 
-          // Determine status
           if ($complete === 0) {
               $status = "Incomplete";
           } elseif ($complete < $total) {
@@ -144,8 +153,9 @@ if (isset($_POST['date_submit'])) {
               $status = "Complete";
           }
 
-          // Show row only if at least one entry is Pending, Approached, or Received
-          if ($total > 0 && $complete < $total || $status === "Complete") {
+          $fully_sent = ($status === "Complete" && $complete === $sent_complete);
+
+          if (!$fully_sent):
         ?>
         <tr>
           <td><?= htmlspecialchars($row["order_id"]) ?></td>
@@ -157,9 +167,8 @@ if (isset($_POST['date_submit'])) {
             <a href="show.php?order_no=<?= urlencode($row["order_id"]) ?>" class="btn btn-info btn-sm">Show</a>
           </td>
         </tr>
-        <?php } ?>
+        <?php endif; ?>
       <?php endwhile; ?>
-
       </tbody>
     </table>
   </div>

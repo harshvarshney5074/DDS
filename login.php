@@ -27,9 +27,6 @@
       <input type="password" name="password" placeholder="Password" required />
       <button type="submit" name="login">Login</button>
     </form>
-    <div class="cta">
-      <a href="#">Forgot your password?</a>
-    </div>
   </div>
 </div>
 
@@ -75,7 +72,7 @@ if (isset($_POST['login'])) {
             $_SESSION["uid"] = $row["username"];
             $_SESSION["type"] = $row["user_type"];
             mysqli_query($conn, "UPDATE user SET last_login=NOW() WHERE username='$username'");
-            header('location:index.php');
+            header('location:home.php');
             exit;
         } else {
             echo "<div class='text-center alert alert-danger mt-4'>Invalid password.</div>";

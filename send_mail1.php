@@ -21,12 +21,12 @@ if (isset($_POST['send_inst'])) {
         // For each entry in send_instentry, insert institute list and update status
         while ($row = mysqli_fetch_assoc($get_inst)) {
             $entry_id = $row['entry_id'];
-            $request_date = $row['req_date'];
+            $mail_sent_date = date('Y-m-d');
 
             foreach ($institutes as $inst_id) {
                 $inst_id = intval($inst_id);
                 mysqli_query($conn, "INSERT INTO institute_list (institute_name, entry_id, req_date) 
-                                     VALUES ('$inst_id', '$entry_id', '$request_date')");
+                                     VALUES ('$inst_id', '$entry_id', '$mail_sent_date')");
             }
 
             mysqli_query($conn, "UPDATE entry SET Status='Approached' WHERE Sr_no='$entry_id'");

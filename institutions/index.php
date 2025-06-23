@@ -1,3 +1,11 @@
+<?php  
+  session_start();
+  include('dbcon.php');
+  include('checkUser.php');
+  $query = "SELECT * FROM institutions";
+  $result = mysqli_query($conn, $query);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,40 +35,38 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
   <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+  <style>
+    body {
+      background-color: lightblue;
+    }
+  </style>
 </head>
+
 <body>
-
-<?php  
-session_start();
-include('dbcon.php');
-include('checkUser.php');
-$query = "SELECT * FROM institutions";
-$result = mysqli_query($conn, $query);
-?>
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="../index.php">IITGN</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <a class="navbar-brand" href="../home.php">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
         <?php if($_SESSION['type']=='0' || $_SESSION['type']=='1'){ ?>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Manage</a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-            <li><a class="dropdown-item" href="../journal/index.php">Journals</a></li>
+            <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
             <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
           </ul>
         </li>
-        <li class="nav-item"><a class="nav-link" href="../biblo_search1.php">Search</a></li>
-        <li class="nav-item"><a class="nav-link" href="../orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
         <?php } ?>
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if($_SESSION['type']=='0'){ ?>
-        <li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>
+        <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
         <?php } ?>
       </ul>
       <ul class="navbar-nav ms-auto">
@@ -74,15 +80,17 @@ $result = mysqli_query($conn, $query);
 </nav>
 
 <div class="container mt-5 pt-5">
-  <h3 class="text-center">Institute List</h3>
+  <h1 class="text-center">Institutions List</h1>
   <div class="text-end mb-3">
-    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
+    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addModal">Add Institution</button>
   </div>
   <table id="employee_data" class="table table-bordered table-striped">
     <thead class="table-dark">
       <tr>
         <th>Institution Name</th>
         <th>Email</th>
+        <th>Phone no.</th>
+        <th>Address</th>
         <th>Status</th>
         <th>Remarks</th>
         <th>Action</th>
@@ -93,6 +101,8 @@ $result = mysqli_query($conn, $query);
       <tr>
         <td><?php echo $row["institute_name"]; ?></td>
         <td><?php echo $row["email"]; ?></td>
+        <td><?php echo $row["phone_no"]; ?></td>
+        <td><?php echo $row["address"]; ?></td>
         <td><?php echo $row["Status"]; ?></td>
         <td><?php echo $row["Remarks"]; ?></td>
         <td>
@@ -111,32 +121,36 @@ $result = mysqli_query($conn, $query);
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">New Entry</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" title="close-btn"></button>
       </div>
       <form method="POST" onsubmit="return validateForm();">
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Institute Name</label>
-            <input type="text" name="institute_name" class="form-control" required>
+            <label for="institute_name" class="form-label">Institute Name</label>
+            <input type="text" name="institute_name" id="institute_name" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" name="email" class="form-control" required>
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" id="email" class="form-control" required>
           </div>
           <div class="mb-3">
-            <label class="form-label">Address</label>
-            <input type="text" name="address" class="form-control" required>
+            <label for="phone_no" class="form-label">Phone no.</label>
+            <input type="tel" name="phone_no" id="phone_no" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" name="address" id="address" class="form-control" required>
           </div>
           <div class="mb-3">
             <label class="form-label">Status</label>
-            <select name="status" class="form-select">
+            <select name="status" class="form-select" title="status">
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">Remarks</label>
-            <input type="text" name="remarks" class="form-control">
+            <label for="remarks" class="form-label">Remarks</label>
+            <input type="text" name="remarks" id="remarks" class="form-control">
           </div>
         </div>
         <div class="modal-footer">
@@ -183,6 +197,7 @@ $result = mysqli_query($conn, $query);
 if (!empty($_POST)) {
   $inst = $_POST['institute_name'];
   $email = $_POST['email'];
+  $phone = $_POST['phone_no'];
   $add = $_POST['address'];
   $status = $_POST['status'];
   $remarks = $_POST['remarks'];
@@ -192,7 +207,7 @@ if (!empty($_POST)) {
   if ($count >= 1) {
     echo "<script>alert('This entry already exists.')</script>";
   } else {
-    $sql = mysqli_query($conn, "INSERT INTO institutions (institute_name,email,address,Status,Remarks) VALUES ('$inst','$email','$add','$status','$remarks')");
+    $sql = mysqli_query($conn, "INSERT INTO institutions (institute_name,email,phone_no,address,Status,Remarks) VALUES ('$inst','$email','$phone','$add','$status','$remarks')");
     if ($sql) {
       echo "<script>alert('Successfully inserted'); window.location='index.php';</script>";
     }

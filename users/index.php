@@ -27,17 +27,24 @@ $result = mysqli_query($conn, $query);
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+  <style>
+    body {
+      background-color: lightblue;
+    }
+  </style>
 </head>  
 
 <body>  
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="../index.php">IITGN</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <a class="navbar-brand" href="../home.php">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
         <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1') { ?>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown">
@@ -45,16 +52,15 @@ $result = mysqli_query($conn, $query);
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="../journal/index.php">Journals</a></li>
+              <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
               <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a class="nav-link" href="../biblo_search1.php">Search</a></li>
-          <li class="nav-item"><a class="nav-link" href="../orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
         <?php } ?>
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] == '0') { ?>
-          <li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>
+        <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
         <?php } ?>
       </ul>
       <ul class="navbar-nav">
@@ -67,10 +73,10 @@ $result = mysqli_query($conn, $query);
   </div>
 </nav>
 
-<main class="container" style="margin-top: 80px;">
-  <h3 class="text-center">User Details</h3>
+<main class="container mt-5 pt-4">
+  <h1 class="text-center mt-4">User Details</h1>
   <div class="mb-3 text-end">
-    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#add_data_Modal">Add</button>
+    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#add_data_Modal">Add User</button>
   </div>
 
   <div id="employee_table">
@@ -113,21 +119,21 @@ $result = mysqli_query($conn, $query);
       <form method="post" id="insert_form" onsubmit="return validateForm();">
         <div class="modal-header">
           <h5 class="modal-title">User Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" title="close-btn"></button>
         </div>
         <div class="modal-body">
-          <label>UserName</label>
-          <input type="text" name="user_name" class="form-control" required>
+          <label for="user_name">UserName</label>
+          <input type="text" name="user_name" id="user_name" class="form-control" required>
           <br />
           <label>UserType</label>
-          <select name="user_type" class="form-control">
+          <select name="user_type" class="form-control" title="user_type">
             <option value="0">Admin</option>
             <option value="1">User</option>
             <option value="2">Normal User</option>
           </select>
           <br />
-          <label>Password</label>
-          <input type="password" name="password" class="form-control" required>
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password" class="form-control" required>
         </div>
         <div class="modal-footer">
           <input type="submit" name="insert" value="Insert" class="btn btn-success">
@@ -144,7 +150,7 @@ $result = mysqli_query($conn, $query);
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">User Details</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" title="close-btn"></button>
       </div>
       <div class="modal-body" id="employee_detail"></div>
       <div class="modal-footer">

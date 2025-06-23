@@ -41,8 +41,7 @@
 
     <style>
         body {
-            background-image: url("image/bg3.jpg");
-            background-attachment: fixed;
+            background-color: lightblue;
         }
         .tabclass {
             background-color: white;
@@ -68,19 +67,48 @@
           background-color: #0d6efd; /* Bootstrap primary */
           border-color: #0d6efd;
         }
+        /* Ensure dropdown appears above everything */
+        .typeahead {
+          z-index: 1051; /* higher than modals etc. */
+          position: absolute;
+          background-color: white;
+          border: 1px solid #ccc;
+          max-height: 200px;
+          overflow-y: auto;
+          width: 100%; /* matches input */
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .typeahead li {
+          padding: 6px 10px;
+          cursor: pointer;
+        }
+
+        .typeahead li.active,
+        .typeahead li:hover {
+          background-color: #f0f0f0;
+        }
+        .journal_name_input {
+          position: relative; /* optional, if needed */
+          z-index: 1051;
+        }
+        tr[id^="row"] td {
+        position: relative;
+      }
     </style>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">IITGN</a>
+            <a class="navbar-brand" href="home.php">Home</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
                 aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
                     <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1') { ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -88,24 +116,23 @@
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
-                                <li><a class="dropdown-item" href="journal/index.php">Journals</a></li>
+                                <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
                                 <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item"><a class="nav-link" href="biblo_search1.php">Search</a></li>
-                        <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+                    <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
                     <?php } ?>
                     <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
                     <?php if ($_SESSION['type'] == '0') { ?>
-                        <li class="nav-item"><a class="nav-link" href="users/index.php">Settings</a></li>
+                        <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
                     <?php } ?>
                 </ul>
 
-                <form id="dateFilterForm" class="d-flex align-items-center" role="search">
-                    <input type="date" name="date1" id="date1" class="form-control me-2" required />
-                    <input type="date" name="date2" id="date2" class="form-control me-2" required />
-                    <button type="submit" class="btn btn-secondary me-3">
-                        <i class="fas fa-search"></i>
+                <form id="dateFilterForm" class="d-flex align-items-center" role="search" style="gap:0.5rem">
+                    <input type="date" name="date1" id="date1" class="form-control form-control-sm" required />
+                    <input type="date" name="date2" id="date2" class="form-control form-control-sm" required />
+                    <button type="submit" class="btn btn-outline-light btn-sm" title="submit">
+                        <i class="fas fa-filter"></i>
                     </button>
                 </form>
                 <ul class="navbar-nav">
@@ -118,136 +145,151 @@
         </div>
     </nav>
 
-<div class="container mt-5 pt-5">
-    <h1 class="text-center mb-4">List of Articles</h1>
-
+<div class="container pt-3">
+    <h1 class="text-center mb-4" style="color: black">Document Delivery Service</h1>
 
     <div class="tabclass table-responsive p-3 rounded shadow-sm">
-        
-        <div class="dropdown mb-3">
-          <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter
-          </button>
-          <div class="dropdown-menu p-3" style="min-width: 300px;">
-            <!-- Status Filters -->
-            <strong>Status</strong><br>
-            <div class="form-check">
-              <input class="form-check-input status-filter" type="checkbox" value="Pending" id="status-pending">
-              <label class="form-check-label" for="status-pending">Pending</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input status-filter" type="checkbox" value="Approached" id="status-approached">
-              <label class="form-check-label" for="status-approached">Approached</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input status-filter" type="checkbox" value="Received" id="status-received">
-              <label class="form-check-label" for="status-approached">Received</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input status-filter" type="checkbox" value="Complete" id="status-complete">
-              <label class="form-check-label" for="status-approached">Complete</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input status-filter" type="checkbox" value="Closed" id="status-closed">
-              <label class="form-check-label" for="status-approached">Closed</label>
-            </div>
+        <h3 class="text-center mb-4">List of Documents</h3>
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
+          <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              Filter
+            </button>
+            <div class="dropdown-menu p-3" style="min-width: 300px;">
+              <!-- Status Filters -->
+              <strong>Status</strong><br>
+              <div class="form-check">
+                <input class="form-check-input status-filter" type="checkbox" value="Pending" id="status-pending">
+                <label class="form-check-label" for="status-pending">Pending</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input status-filter" type="checkbox" value="Approached" id="status-approached">
+                <label class="form-check-label" for="status-approached">Approached</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input status-filter" type="checkbox" value="Received" id="status-received">
+                <label class="form-check-label" for="status-approached">Received</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input status-filter" type="checkbox" value="Complete" id="status-complete">
+                <label class="form-check-label" for="status-approached">Complete</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input status-filter" type="checkbox" value="Closed" id="status-closed">
+                <label class="form-check-label" for="status-approached">Closed</label>
+              </div>
 
-            <hr class="my-2">
+              <hr class="my-2">
 
-            <!-- Document Type Filters -->
-            <strong>Document Type</strong><br>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Journal Article" id="doc-journalarticle">
-              <label class="form-check-label" for="doc-journalarticle">Journal Article</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Conference Paper" id="doc-conferencepaper">
-              <label class="form-check-label" for="doc-conferencepaper">Conference Paper</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Book" id="doc-book">
-              <label class="form-check-label" for="doc-book">Book</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Book Chapter" id="doc-bookchapter">
-              <label class="form-check-label" for="doc-bookchapter">Book Chapter</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Standard" id="doc-standard">
-              <label class="form-check-label" for="doc-standard">Standard</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Patent" id="doc-patent">
-              <label class="form-check-label" for="doc-patent">Patent</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Thesis" id="doc-thesis">
-              <label class="form-check-label" for="doc-thesis">Thesis</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Technical Paper" id="doc-technicalpaper">
-              <label class="form-check-label" for="doc-technicalpaper">Technical Paper</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Technical Report" id="doc-technicalreport">
-              <label class="form-check-label" for="doc-technicalreport">Technical Report</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="External" id="doc-external">
-              <label class="form-check-label" for="doc-external">External</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input doc-type-filter" type="checkbox" value="Others" id="doc-others">
-              <label class="form-check-label" for="doc-others">Others</label>
-            </div>
+              <!-- Document Type Filters -->
+              <strong>Document Type</strong><br>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Journal Article" id="doc-journalarticle">
+                <label class="form-check-label" for="doc-journalarticle">Journal Article</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Conference Paper" id="doc-conferencepaper">
+                <label class="form-check-label" for="doc-conferencepaper">Conference Paper</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Book" id="doc-book">
+                <label class="form-check-label" for="doc-book">Book</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Book Chapter" id="doc-bookchapter">
+                <label class="form-check-label" for="doc-bookchapter">Book Chapter</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Standard" id="doc-standard">
+                <label class="form-check-label" for="doc-standard">Standard</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Patent" id="doc-patent">
+                <label class="form-check-label" for="doc-patent">Patent</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Thesis" id="doc-thesis">
+                <label class="form-check-label" for="doc-thesis">Thesis</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Technical Paper" id="doc-technicalpaper">
+                <label class="form-check-label" for="doc-technicalpaper">Technical Paper</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Technical Report" id="doc-technicalreport">
+                <label class="form-check-label" for="doc-technicalreport">Technical Report</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input doc-type-filter" type="checkbox" value="Others" id="doc-others">
+                <label class="form-check-label" for="doc-others">Others</label>
+              </div>
 
-            <hr class="my-2">
+              <hr class="my-2">
 
-            <!-- Patron Category Filters -->
-            <strong>Category</strong><br>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Student" id="cat-student">
-              <label class="form-check-label" for="cat-student">Student</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Faculty" id="cat-faculty">
-              <label class="form-check-label" for="cat-faculty">Faculty</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Other Institution" id="cat-other">
-              <label class="form-check-label" for="cat-other">Other Institution</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Corporate Member" id="cat-corporatemember">
-              <label class="form-check-label" for="cat-corporatemember">Corporate Member</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Other Institute" id="cat-institutemember">
-              <label class="form-check-label" for="cat-institutemember">Institute Member</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Staff" id="cat-staff">
-              <label class="form-check-label" for="cat-staff">Staff</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Individual Membership" id="cat-individual">
-              <label class="form-check-label" for="cat-individual">Individual Membership</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input category-filter" type="checkbox" value="Alumni" id="cat-alumni">
-              <label class="form-check-label" for="cat-alumni">Alumni</label>
+              <!-- Patron Category Filters -->
+              <strong>Category</strong><br>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Student" id="cat-student">
+                <label class="form-check-label" for="cat-student">Student</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Faculty" id="cat-faculty">
+                <label class="form-check-label" for="cat-faculty">Faculty</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Other Institution" id="cat-other">
+                <label class="form-check-label" for="cat-other">Other Institution</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Corporate Member" id="cat-corporatemember">
+                <label class="form-check-label" for="cat-corporatemember">Corporate Member</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Institute Member" id="cat-institutemember">
+                <label class="form-check-label" for="cat-institutemember">Institute Member</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Staff" id="cat-staff">
+                <label class="form-check-label" for="cat-staff">Staff</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Individual Membership" id="cat-individual">
+                <label class="form-check-label" for="cat-individual">Individual Membership</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input category-filter" type="checkbox" value="Alumni" id="cat-alumni">
+                <label class="form-check-label" for="cat-alumni">Alumni</label>
+              </div>
             </div>
           </div>
+            <div class="flex-grow-1">
+              <input type="text" id="searchInput" class="form-control border-2" placeholder="Search term">
+            </div>
+            <div class="d-flex align-items-center">
+              <label for="searchColumn" class="form-label me-2 mb-0">Search in:</label>
+              <select id="searchColumn" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Columns</option>
+                <option value="e.Sr_no">ID</option>
+                <option value="e.Req_date">Date</option>
+                <option value="p.Display_name">Patron</option>
+                <option value="e.Category">Category</option>
+                <option value="e.Bibliographic_details">Bibliographic Details</option>
+                <option value="e.Journal_name">Journal Name</option>
+                <option value="e.Document_type">Document Type</option>
+                <option value="e.Status">Status</option>
+              </select>
+            </div>
         </div>
-        <button type="button" name="add" id="add" data-bs-toggle="modal" data-bs-target="#add_data_Modal" class="btn btn-warning mb-2">Add Entry</button>
-        <form method="POST" action="institute_mail3.php" id="entryMailForm">
-          <div class="d-flex align-items-center justify-content-between mb-2">
-            <div>
-              <button type="submit" name="mail" class="btn btn-primary" id="addToMailBtn">Add to Mail</button>
-              <button type="button" class="btn btn-danger ms-2" id="removeAllBtn">Remove All</button>
-              <span id="selectedCount" class="ms-2 text-muted">(0 entries selected)</span>
+          <button type="button" name="add" id="add" data-bs-toggle="modal" data-bs-target="#add_data_Modal" class="btn btn-warning mb-2">Add New Entry</button>
+          <form method="POST" action="institute_mail3.php" id="entryMailForm" class="d-flex flex-wrap gap-2 align-items-center flex-grow-1 mb-2">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div>
+                <button type="submit" name="mail" class="btn btn-primary" id="addToMailBtn">Send Mail</button>
+                <button type="button" class="btn btn-danger ms-2" id="removeAllBtn">Remove All</button>
+                <span id="selectedCount" class="ms-2 text-muted">(0 entries selected)</span>
+              </div>
             </div>
-          </div>
+          <div class="table-responsive w-100 mt-3">
           <table id="employee_data" class="table table-hover table-striped table-bordered" style="width:100%">
               <thead class="table-info">
                   <tr>
@@ -266,6 +308,7 @@
               </thead>
               <tbody></tbody> <!-- DataTables will populate this -->
           </table>
+          </div>
         </form>
     </div>
 </div>
@@ -315,21 +358,21 @@
           </select>
 
           <div class="mt-4">
-            <label>Bibliographic Details | Document Type | Journal Name</label>
+            <label for="add_input">Bibliographic Details | Document Type | Journal Name</label>
             <table id="dynamic" class="table table-borderless">
               <tbody>
                 <tr id="row1">
                   <td style="width:98%">
                     <select name="document_type[]" class="form-control document_type_select" required>
                       <?php
-                        $doc = mysqli_query($conn, "SELECT * FROM document_type");
+                        $doc = mysqli_query($conn, "SELECT DISTINCT Document_type FROM document_type");
                         while ($get = mysqli_fetch_array($doc)) {
                           echo '<option value="'.htmlspecialchars($get['Document_type']).'">'.htmlspecialchars($get['Document_type']).'</option>';
                         }
                       ?>
                     </select>
                     <br>
-                    <input type="text" name="journal_name[]" class="form-control journal_name_input" autocomplete="off" placeholder="Journal Name" />
+                    <input type="text" name="journal_name[]" class="form-control journal_name_input" autocomplete="off" placeholder="Journal Name" required />
                     <br>
                     <textarea name="name[]" class="form-control biblio_det_textarea" placeholder="Bibliographic details" required></textarea>
                     <br>
@@ -442,6 +485,7 @@
       "scrollX": true,
       "processing": true,
       "serverSide": true,
+      "searching": false,
       "ajax": {
             url: "fetch_data.php",
             type: "POST",
@@ -452,18 +496,20 @@
                 d.statuses = selectedStatuses;
                 d.docTypes = selectedDocTypes;
                 d.categories = selectedCategories;
+                d.searchColumn = $('#searchColumn').val();
+                d.searchValue = $('#searchInput').val();
             }
       },
       "stateSave": true,
       "lengthMenu": [ [10, 25, 50, 100], [10, 25, 50, 100] ],
-      dom: 'Bflrtip',
+      dom: 'Blrtip',
       buttons: [
             'excelHtml5',
             'csvHtml5',
             'pdfHtml5'
       ],
       "columns": [
-            { "data": 0 },  // Mail icon
+            { "data": 0, orderable: false },  // Mail icon
             { "data": 1 },  // ID
             { "data": 2 },  // Date
             { "data": 3 },  // Patron
@@ -472,9 +518,24 @@
             { "data": 6 },  // Journal Name
             { "data": 7 },  // Document Type
             { "data": 8 },  // Status
-            { "data": 9 },   // Actions
-            { "data": 10 } // Download
+            { "data": 9, orderable: false },  // Actions
+            { "data": 10, orderable: false } // Download
       ]
+    });
+
+    $('#employee_data').on('draw.dt', function () {
+      $('a[aria-role]').each(function () {
+        const role = $(this).attr('aria-role');
+        $(this).removeAttr('aria-role').attr('role', role);
+      });
+    });
+
+    $('#searchColumn').on('change', function () {
+      table.ajax.reload();
+    });
+
+    $('#searchInput').on('input', function () {
+      table.ajax.reload();
     });
 
     function updateFilters() {
@@ -518,7 +579,7 @@
         <td style="width:98%">
           <select name="document_type[]" class="form-control document_type_select" required>
             <?php
-              $doc = mysqli_query($conn, "SELECT * FROM document_type");
+              $doc = mysqli_query($conn, "SELECT DISTINCT Document_type FROM document_type");
               while ($get = mysqli_fetch_array($doc)) {
                 echo '<option value="'.htmlspecialchars($get['Document_type']).'">'.htmlspecialchars($get['Document_type']).'</option>';
               }
@@ -612,7 +673,6 @@
     }
 
     // For static inputs
-    initTypeahead('#jour', 'fetch1.php');
     initTypeahead('#req_by', 'fetch2.php');
 
     // Since dynamic rows added later, delegate typeahead initialization on focus

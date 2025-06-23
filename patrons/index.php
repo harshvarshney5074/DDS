@@ -9,6 +9,7 @@ $result = mysqli_query($conn, $query);
 <html lang="en">  
 <head>  
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DDS - Patrons</title>
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -22,31 +23,37 @@ $result = mysqli_query($conn, $query);
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+  <style>
+    body {
+      background-color: lightblue;
+    }
+  </style>
 </head>  
 <body>  
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="../index.php">IITGN</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <a class="navbar-brand" href="../home.php">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
         <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Manage</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="../journal/index.php">Journals</a></li>
+              <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
               <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a class="nav-link" href="../biblo_search1.php">Search</a></li>
-          <li class="nav-item"><a class="nav-link" href="../orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
         <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] === '0'): ?>
-          <li class="nav-item"><a class="nav-link" href="../users/index.php">Settings</a></li>
+          <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
         <?php endif; ?>
       </ul>
       <ul class="navbar-nav ms-auto">
@@ -60,20 +67,20 @@ $result = mysqli_query($conn, $query);
 </nav>
 
 <div class="container mt-5 pt-4">
-  <h3 class="text-center mt-4">Patron List</h3>
+  <h1 class="text-center mt-4">Patrons List</h1>
   <div class="d-flex justify-content-end mb-2">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add_data_Modal">Add Patron</button>
+    <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#add_data_Modal">Add Patron</button>
   </div>
 
   <div class="table-responsive">
     <table id="employee_data" class="table table-bordered table-striped">
       <thead class="table-dark">
         <tr>
-          <th>Roll No</th>
+          <th>Roll No/ID</th>
           <th>Display Name</th>
-          <th>Email Id</th>
-          <th>Discipline</th>
-          <th>Program Name</th>
+          <th>Email ID</th>
+          <th>Department</th>
+          <th>Program/Designation</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -93,11 +100,11 @@ $result = mysqli_query($conn, $query);
                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-               <input class="form-control mb-2" type="text" name="roll_no" placeholder="Roll No" required>
+               <input class="form-control mb-2" type="text" name="roll_no" placeholder="Roll No/ID" required>
                <input class="form-control mb-2" type="text" name="display_name" placeholder="Display Name" required>
-               <input class="form-control mb-2" type="email" name="email_id" placeholder="Email Id" required>
-               <input class="form-control mb-2" type="text" name="discipline" placeholder="Discipline" required>
-               <input class="form-control mb-2" type="text" name="program_name" placeholder="Program Name" required>
+               <input class="form-control mb-2" type="email" name="email_id" placeholder="Email ID" required>
+               <input class="form-control mb-2" type="text" name="discipline" placeholder="Department" required>
+               <input class="form-control mb-2" type="text" name="program_name" placeholder="Program/Designation" required>
                <select class="form-select" name="status">
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -131,7 +138,7 @@ $result = mysqli_query($conn, $query);
           orderable: false,
           render: function(data, type, row) {
                return `
-               <a href="edit11.php?edit_record=${row.Sr_no}" class="btn btn-sm btn-primary">Edit</a>
+               <a href="edit11.php?edit_record=${row.Sr_no}" class="btn btn-sm btn-info">Edit</a>
                <button class="btn btn-sm btn-danger" onclick="deletePatron(${row.Sr_no})">Delete</button>
                `;
           }

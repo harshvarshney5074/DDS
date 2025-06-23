@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DDS - Order Details</title>
 
   <!-- Bootstrap 5 CSS -->
@@ -24,6 +25,7 @@
     }
     body {
       padding-top: 70px; /* account for fixed navbar */
+      background-color: lightblue;
     }
   </style>
 </head>
@@ -36,27 +38,27 @@ session_start(); // Make sure session is started before accessing $_SESSION
 <!-- Navbar from show3.php -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="index.php">IITGN</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <a class="navbar-brand" href="home.php">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" title="navbar-toggler">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
         <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Manage</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="journal/index.php">Journals</a></li>
+              <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
               <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
             </ul>
           </li>
-          <li class="nav-item"><a class="nav-link" href="biblo_search1.php">Search</a></li>
-          <li class="nav-item"><a class="nav-link" href="orders.php">Orders</a></li>
+        <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
         <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] === '0'): ?>
-          <li class="nav-item"><a class="nav-link" href="users/index.php">Settings</a></li>
+          <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
         <?php endif; ?>
       </ul>
       <ul class="navbar-nav ms-auto">
@@ -102,7 +104,7 @@ if (isset($_GET['order_no'])) {
       <tbody>
         <?php while ($row = mysqli_fetch_array($sql)) { ?>
           <tr>
-            <td><input type="checkbox" name="send[]" value="<?php echo $row['Sr_no']; ?>"></td>
+            <td><input type="checkbox" name="send[]" title="send" value="<?php echo $row['Sr_no']; ?>"></td>
             <td><?php echo $row['Sr_no']; ?></td>
             <td><?php echo $row['Bibliographic_details']; ?></td>
             <td><?php echo $row['Status']; ?></td>
