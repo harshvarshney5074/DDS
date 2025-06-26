@@ -52,7 +52,6 @@ include('checkUser.php');
 		<div class="collapse navbar-collapse" id="navbarNav">
 		<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 			<li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
-			<?php if($_SESSION['type']=='0' || $_SESSION['type']=='1'){ ?>
 			<li class="nav-item dropdown">
 			<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 				Manage
@@ -64,7 +63,6 @@ include('checkUser.php');
 			</ul>
 			</li>
 			<li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
-			<?php } ?>
 			<li class="nav-item"><a class="nav-link" href="../reports/charts/bargraph.php">Statistics</a></li>
 			<?php if($_SESSION['type']=='0'){ ?>
 			<li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
@@ -334,10 +332,11 @@ while ($row = mysqli_fetch_assoc($cat_result)) {
 				d.user_date2 = $('input[name="user_date2"]').val();
 				}
 			},
-			order: [[2, 'desc']], // Sort by count
+			order: [[3, 'desc']], // Sort by count
 			columns: [
 				{ title: "#", orderable: false },
 				{ title: "Patron" },
+				{ title: "Email" },
 				{ title: "No of Requests" },
 				{ title: "Pending" },
 				{ title: "Approached" },
@@ -553,13 +552,13 @@ while ($row = mysqli_fetch_assoc($cat_result)) {
 				</div>
 				<div class="col">
 					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
-					<div class="text-muted"><i class="fa fa-user"></i> Individual Memberships</div>
+					<div class="text-muted"><i class="fa fa-user"></i> Individual Members</div>
 					<div class="fs-5 fw-bold"><?= $category_counts['Individual Membership'] ?? 0 ?></div>
 					</div>
 				</div>
 				<div class="col">
 					<div class="p-3 bg-light border rounded text-center h-100 d-flex flex-column justify-content-center">
-					<div class="text-muted"><i class="fa fa-user"></i> Institute Members</div>
+					<div class="text-muted"><i class="fa fa-user"></i> Academic Members</div>
 					<div class="fs-5 fw-bold"><?= $category_counts['Institute Member'] ?? 0 ?></div>
 					</div>
 				</div>
@@ -711,7 +710,7 @@ while ($row = mysqli_fetch_assoc($types_result)) {
 	<!-- Request by Libraries -->
 	<div class="card shadow mb-4">
 		<div class="card-header d-flex justify-content-between align-items-center bg-warning text-dark">
-		<h5 class="mb-0">Requests by Libraries</h5>
+		<h5 class="mb-0">Requests to Libraries</h5>
 		<form class="d-flex gap-2" id="library-filter-form">
 			<input type="date" class="form-control form-control-sm" name="lib_date1">
 			<input type="date" class="form-control form-control-sm" name="lib_date2">
@@ -796,7 +795,7 @@ while ($row = mysqli_fetch_assoc($types_result)) {
 			<div class="card-body">
 				<table id="table_users" class="table table-bordered table-hover table-sm w-100">
 				<thead class="table-light"><tr>
-					<th>#</th><th>Patron</th><th>No of Requests</th>
+					<th>#</th><th>Patron</th><th>Email</th><th>No of Requests</th>
 					<th>Pending</th><th>Approached</th><th>Received</th>
 					<th>Complete</th><th>Closed</th>
 				</tr></thead>

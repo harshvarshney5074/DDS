@@ -4,12 +4,13 @@ include('../dbcon.php');
 $columns = [
   0 => '',         // Sno (not sortable)
   1 => 'patron_name',
-  2 => 'count',
-  3 => 'Pending',
-  4 => 'Approached',
-  5 => 'Received',
-  6 => 'Complete',
-  7 => 'Closed'
+  2 => 'Email',
+  3 => 'count',
+  4 => 'Pending',
+  5 => 'Approached',
+  6 => 'Received',
+  7 => 'Complete',
+  8 => 'Closed'
 ];
 
 // DataTables parameters
@@ -31,7 +32,7 @@ $dateFilter = $useDate
 $whereSearch = '';
 if ($search) {
   $esc = mysqli_real_escape_string($conn, $search);
-  $whereSearch = ($dateFilter ? ' AND ' : 'WHERE ') . "(p.Display_name LIKE '%$esc%')";
+  $whereSearch = ($dateFilter ? ' AND ' : 'WHERE ') . "(p.Display_name LIKE '%$esc%' OR p.Email_id LIKE '%$esc%')";
 }
 $whereClause = $dateFilter . $whereSearch;
 
@@ -43,6 +44,7 @@ $orderSQL = $orderCol ? "ORDER BY $orderCol $orderDir" : "";
 $sql = "
   SELECT
     p.Display_name AS patron_name,
+    p.Email_id AS Email,
     COUNT(*) AS count,
     SUM(e.Status='Pending') AS Pending,
     SUM(e.Status='Approached') AS Approached,
@@ -86,6 +88,7 @@ while ($row = mysqli_fetch_assoc($res)) {
   $data[] = [
     $idx++,
     htmlspecialchars($row['patron_name']),
+    htmlspecialchars($row['Email']),
     intval($row['count']),
     intval($row['Pending']),
     intval($row['Approached']),

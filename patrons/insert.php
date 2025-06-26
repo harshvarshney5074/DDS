@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $roll_no = $_POST['roll_no'];
     $display_name = $_POST['display_name'];
     $email_id = $_POST['email_id'];
-    $discipline = $_POST['discipline'];
-    $program_name = $_POST['program_name'];
+    $discipline = ($_POST['discipline'] === 'Other') ? trim($_POST['discipline_other']) : $_POST['discipline'];
+    $program_name = ($_POST['program_name'] === 'Other') ? trim($_POST['program_name_other']) : $_POST['program_name'];
     $status = $_POST['status'];
 
     $check = mysqli_query($conn, "SELECT * FROM patrons WHERE Email_id='$email_id'");

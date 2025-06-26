@@ -109,19 +109,17 @@
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
-                    <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1') { ?>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Manage
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
-                                <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
-                                <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
-                            </ul>
-                        </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Manage
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
+                            <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
+                            <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
-                    <?php } ?>
                     <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
                     <?php if ($_SESSION['type'] == '0') { ?>
                         <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
@@ -268,13 +266,13 @@
             <div class="d-flex align-items-center">
               <label for="searchColumn" class="form-label me-2 mb-0">Search in:</label>
               <select id="searchColumn" class="form-select form-select-sm" style="width: auto;">
-                <option value="">All Columns</option>
+                <option value="">All Fields</option>
                 <option value="e.Sr_no">ID</option>
                 <option value="e.Req_date">Date</option>
                 <option value="p.Display_name">Patron</option>
                 <option value="e.Category">Category</option>
                 <option value="e.Bibliographic_details">Bibliographic Details</option>
-                <option value="e.Journal_name">Journal Name</option>
+                <option value="e.Journal_name">Source</option>
                 <option value="e.Document_type">Document Type</option>
                 <option value="e.Status">Status</option>
               </select>
@@ -299,7 +297,7 @@
                       <th>Patron</th>
                       <th>Category</th>
                       <th>Bibliographic Details</th>
-                      <th>Journal Name</th>
+                      <th>Source</th>
                       <th>Document Type</th>
                       <th>Status</th>
                       <th>Actions</th>
@@ -358,7 +356,7 @@
           </select>
 
           <div class="mt-4">
-            <label for="add_input">Bibliographic Details | Document Type | Journal Name</label>
+            <label for="add_input">Document Type  | Source | Bibliographic Details</label>
             <table id="dynamic" class="table table-borderless">
               <tbody>
                 <tr id="row1">
@@ -372,9 +370,9 @@
                       ?>
                     </select>
                     <br>
-                    <input type="text" name="journal_name[]" class="form-control journal_name_input" autocomplete="off" placeholder="Journal Name" required />
+                    <input type="text" name="journal_name[]" class="form-control journal_name_input" autocomplete="off" placeholder="Source" required />
                     <br>
-                    <textarea name="name[]" class="form-control biblio_det_textarea" placeholder="Bibliographic details" required></textarea>
+                    <textarea name="name[]" class="form-control biblio_det_textarea" placeholder="Bibliographic details/DOI Link" required></textarea>
                     <br>
                   </td>
                   <td style="width:2%" class="align-middle">
@@ -410,6 +408,33 @@
 
 <!-- Scripts -->
 <script>
+    $(document).on('paste', '.biblio_det_textarea', function (e) {
+      const textarea = this;
+      
+      setTimeout(function () {
+          const pasted = $(textarea).val().trim();
+
+          // Only trigger if the pasted content is exactly a DOI URL
+          const doiRegex = /^https?:\/\/(dx\.)?doi\.org\/10\.\d{4,9}\/[-._;()/:A-Z0-9]+$/i;
+          if (doiRegex.test(pasted)) {
+              const doiUrl = pasted;
+              $(textarea).val('Fetching APA citation...');
+              
+              $.ajax({
+                  url: 'fetch_citation.php',
+                  method: 'POST',
+                  data: { doi: doiUrl },
+                  success: function (citation) {
+                      $(textarea).val(citation);
+                  },
+                  error: function () {
+                      $(textarea).val('Failed to fetch citation for: ' + doiUrl);
+                  }
+              });
+          }
+      }, 100); // Wait for paste to complete
+  });
+
   $(document).ready(function () {
       function updateSelectedCount() {
       const count = $('.entry-checkbox:checked').length;

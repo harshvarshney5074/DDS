@@ -46,7 +46,6 @@ function trim_input($data) {
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
-        <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
             Manage
@@ -58,7 +57,6 @@ function trim_input($data) {
           </ul>
         </li>
         <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
-        <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] === '0'): ?>
         <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
@@ -92,11 +90,31 @@ function trim_input($data) {
     </div>
     <div class="mb-3">
       <label for="discipline" class="form-label">Department</label>
-      <input type="text" class="form-control" id="discipline" name="discipline" value="<?= $discipline ?>" required>
+      <select class="form-select" name="discipline" id="discipline" required>
+        <option value="" disabled>Select Department</option>
+        <?php
+          $deptRes = mysqli_query($conn, "SELECT name FROM departments ORDER BY (name = 'Other'), name");
+          while ($row = mysqli_fetch_assoc($deptRes)) {
+            $selected = ($discipline === $row['name']) ? 'selected' : '';
+            echo '<option value="'.htmlspecialchars($row['name']).'" '.$selected.'>'.htmlspecialchars($row['name']).'</option>';
+          }
+        ?>
+      </select>
+      <input type="text" class="form-control mt-2 <?= $discipline === 'Other' ? '' : 'd-none' ?>" name="discipline_other" id="discipline_other" placeholder="Enter Department" value="<?= $discipline === 'Other' ? htmlspecialchars($discipline) : '' ?>">
     </div>
     <div class="mb-3">
       <label for="program_name" class="form-label">Program/Designation</label>
-      <input type="text" class="form-control" id="program_name" name="program_name" value="<?= $program_name ?>" required>
+      <select class="form-select" name="program_name" id="program_name" required>
+        <option value="" disabled>Select Program/Designation</option>
+        <?php
+          $progRes = mysqli_query($conn, "SELECT name FROM programs ORDER BY (name = 'Other'), name");
+          while ($row = mysqli_fetch_assoc($progRes)) {
+            $selected = ($program_name === $row['name']) ? 'selected' : '';
+            echo '<option value="'.htmlspecialchars($row['name']).'" '.$selected.'>'.htmlspecialchars($row['name']).'</option>';
+          }
+        ?>
+      </select>
+      <input type="text" class="form-control mt-2 <?= $program_name === 'Other' ? '' : 'd-none' ?>" name="program_name_other" id="program_name_other" placeholder="Enter Program/Designation" value="<?= $program_name === 'Other' ? htmlspecialchars($program_name) : '' ?>">
     </div>
     <div class="mb-3">
       <label for="status" class="form-label">Status</label>
@@ -112,15 +130,41 @@ function trim_input($data) {
 </div>
 
 <script>
-function validateForm() {
-  const email = document.forms["inst_form"]["email_id"].value;
-  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!re.test(email)) {
-    alert("Please enter a valid email address.");
-    return false;
+  function validateForm() {
+    const email = document.forms["inst_form"]["email_id"].value;
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!re.test(email)) {
+      alert("Please enter a valid email address.");
+      return false;
+    }
+    return true;
   }
-  return true;
-}
+  document.addEventListener('DOMContentLoaded', function () {
+    const deptSelect = document.getElementById('discipline');
+    const deptOther = document.getElementById('discipline_other');
+    const progSelect = document.getElementById('program_name');
+    const progOther = document.getElementById('program_name_other');
+
+    deptSelect.addEventListener('change', function () {
+      if (this.value === 'Other') {
+        deptOther.classList.remove('d-none');
+        deptOther.required = true;
+      } else {
+        deptOther.classList.add('d-none');
+        deptOther.required = false;
+      }
+    });
+
+    progSelect.addEventListener('change', function () {
+      if (this.value === 'Other') {
+        progOther.classList.remove('d-none');
+        progOther.required = true;
+      } else {
+        progOther.classList.add('d-none');
+        progOther.required = false;
+      }
+    });
+  });
 </script>
 
 <?php
@@ -128,8 +172,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
   $roll_no = trim_input($_POST['roll_no']);
   $display_name = trim_input($_POST['display_name']);
   $email_id = trim_input($_POST['email_id']);
-  $discipline = trim_input($_POST['discipline']);
-  $program_name = trim_input($_POST['program_name']);
+  $discipline = ($_POST['discipline'] === 'Other') ? trim_input($_POST['discipline_other']) : trim_input($_POST['discipline']);
+  $program_name = ($_POST['program_name'] === 'Other') ? trim_input($_POST['program_name_other']) : trim_input($_POST['program_name']);
   $status = $_POST['status'];
 
   $update_record = mysqli_query($conn, "UPDATE patrons 

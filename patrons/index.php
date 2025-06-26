@@ -40,19 +40,17 @@ $result = mysqli_query($conn, $query);
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
-        <?php if ($_SESSION['type'] === '0' || $_SESSION['type'] === '1'): ?>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-              Manage
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
-              <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
-            </ul>
-          </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            Manage
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
+            <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
+            <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
+          </ul>
+        </li>
         <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
-        <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] === '0'): ?>
           <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
@@ -105,8 +103,27 @@ $result = mysqli_query($conn, $query);
                <input class="form-control mb-2" type="text" name="roll_no" placeholder="Roll No/ID" required>
                <input class="form-control mb-2" type="text" name="display_name" placeholder="Display Name" required>
                <input class="form-control mb-2" type="email" name="email_id" placeholder="Email ID" required>
-               <input class="form-control mb-2" type="text" name="discipline" placeholder="Department" required>
-               <input class="form-control mb-2" type="text" name="program_name" placeholder="Program/Designation" required>
+                <select class="form-select mb-2" name="discipline" id="discipline" required>
+                  <option value="" disabled selected>Select Department</option>
+                  <?php
+                    $deptRes = mysqli_query($conn, "SELECT name FROM departments ORDER BY (name = 'Other'), name");
+                    while ($row = mysqli_fetch_assoc($deptRes)) {
+                        echo '<option value="'.htmlspecialchars($row['name']).'">'.htmlspecialchars($row['name']).'</option>';
+                    }
+                  ?>
+                </select>
+                <input type="text" class="form-control mt-2 d-none" name="discipline_other" id="discipline_other" placeholder="Enter Department">
+                <select class="form-select mb-2" name="program_name" id="program_name" required>
+                  <option value="" disabled selected>Select Program/Designation</option>
+                  <?php
+                    $progRes = mysqli_query($conn, "SELECT name FROM programs ORDER BY (name = 'Other'), name");
+                    while ($row = mysqli_fetch_assoc($progRes)) {
+                        echo '<option value="'.htmlspecialchars($row['name']).'">'.htmlspecialchars($row['name']).'</option>';
+                    }
+                  ?>
+                </select>
+                <input type="text" class="form-control mt-2 d-none" name="program_name_other" id="program_name_other" placeholder="Enter Program/Designation">
+
                <select class="form-select" name="status">
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -184,6 +201,32 @@ $result = mysqli_query($conn, $query);
      }, 'json');
      }
      }
+     document.addEventListener('DOMContentLoaded', function () {
+      const deptSelect = document.getElementById('discipline');
+      const deptOther = document.getElementById('discipline_other');
+      const progSelect = document.getElementById('program_name');
+      const progOther = document.getElementById('program_name_other');
+
+      deptSelect.addEventListener('change', function () {
+        if (this.value === 'Other') {
+          deptOther.classList.remove('d-none');
+          deptOther.required = true;
+        } else {
+          deptOther.classList.add('d-none');
+          deptOther.required = false;
+        }
+      });
+
+      progSelect.addEventListener('change', function () {
+        if (this.value === 'Other') {
+          progOther.classList.remove('d-none');
+          progOther.required = true;
+        } else {
+          progOther.classList.add('d-none');
+          progOther.required = false;
+        }
+      });
+    });
 </script>
 
 </body>

@@ -45,19 +45,17 @@ $result = mysqli_query($conn, $query);
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="../index.php">Entries</a></li>
-        <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1') { ?>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown">
-              Manage
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
-              <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
-            </ul>
-          </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown">
+            Manage
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="../institutions/index.php">Institutions</a></li>
+            <li><a class="dropdown-item" href="../journal/index.php">Document Sources</a></li>
+            <li><a class="dropdown-item" href="../patrons/index.php">Patrons</a></li>
+          </ul>
+        </li>
         <li class="nav-item"><a class="nav-link" href="../orders.php">Requests</a></li>
-        <?php } ?>
         <li class="nav-item"><a class="nav-link" href="../reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] == '0') { ?>
         <li class="nav-item"><a class="nav-link" href="../users/index.php">Users</a></li>
@@ -93,8 +91,7 @@ $result = mysqli_query($conn, $query);
         <?php while ($row = mysqli_fetch_array($result)) {
           $utype = match ($row["user_type"]) {
             "0" => "Admin",
-            "1" => "User",
-            default => "Normal User"
+            default => "User"
           };
         ?>
           <tr>
@@ -129,7 +126,6 @@ $result = mysqli_query($conn, $query);
           <select name="user_type" class="form-control" title="user_type">
             <option value="0">Admin</option>
             <option value="1">User</option>
-            <option value="2">Normal User</option>
           </select>
           <br />
           <label for="password">Password</label>

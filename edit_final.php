@@ -235,7 +235,6 @@ if (isset($_POST['update'])) {
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
-        <?php if($_SESSION['type']=='0' || $_SESSION['type']=='1'){ ?>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Manage
@@ -247,7 +246,6 @@ if (isset($_POST['update'])) {
           </ul>
         </li>
         <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
-        <?php } ?>
         <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
         <?php if($_SESSION['type']=='0'){ ?>
         <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
@@ -355,7 +353,7 @@ if (isset($_POST['update'])) {
         </div>
 
         <div class="mb-3">
-            <label for="country" class="form-label">Journal Name</label>
+            <label for="country" class="form-label">Source</label>
             <input type="text" name="journal_name" id="country" class="form-control" value="<?php echo htmlspecialchars($jour); ?>" autocomplete="off" placeholder="Journal Name" />
         </div>
 

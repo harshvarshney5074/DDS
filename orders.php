@@ -65,19 +65,17 @@ if (isset($_POST['date_submit'])) {
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item"><a class="nav-link" href="index.php">Entries</a></li>
-        <?php if ($_SESSION['type'] == '0' || $_SESSION['type'] == '1'): ?>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Manage
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="manageDropdown">
-              <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
-              <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
-              <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
-            </ul>
-          </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Manage
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="manageDropdown">
+            <li><a class="dropdown-item" href="institutions/index.php">Institutions</a></li>
+            <li><a class="dropdown-item" href="journal/index.php">Document Sources</a></li>
+            <li><a class="dropdown-item" href="patrons/index.php">Patrons</a></li>
+          </ul>
+        </li>
         <li class="nav-item"><a class="nav-link" href="orders.php">Requests</a></li>
-        <?php endif; ?>
         <li class="nav-item"><a class="nav-link" href="reports/index.php">Reports</a></li>
         <?php if ($_SESSION['type'] == '0'): ?>
           <li class="nav-item"><a class="nav-link" href="users/index.php">Users</a></li>
