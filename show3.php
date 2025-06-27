@@ -15,18 +15,21 @@ include("dbcon.php");
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 
-  <!-- TinyMCE -->
-  <script src="https://cdn.tiny.cloud/1/qp8d4fz8gld9sydga5ch53yhhve7v7y2jpf0f4ko1zanlvk2/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <!-- CKEditor 5 Classic -->
+  <script src="js/ckeditor.js"></script>
   <script>
-    tinymce.init({
-      selector: 'textarea',
-      height: 500,
-      menubar: true,
-      plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table wordcount',
-      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
-      branding: false
+    document.addEventListener('DOMContentLoaded', function () {
+      ClassicEditor
+        .create(document.querySelector('#body'))
+        .then(editor => {
+          console.log('Editor ready', editor);
+        })
+        .catch(error => {
+          console.error('Editor init error:', error);
+        });
     });
   </script>
+
 
   <style>
     body {
@@ -86,7 +89,10 @@ include("dbcon.php");
     $useremail = $_POST['useremail'];
     $username = $_POST['username'];
 
-    $body = 'Dear ' . $username . ',<p>Please find attached the requested article(s).</p>';
+    $body = "<p>Dear $username,</p>";
+
+    $body .= "<p>Please find attached some of the research paper(s) you had requested.</p>";
+    $body .= "<p><strong>Details of the requested resource(s):</strong></p>";
 
     echo '<div class="mb-3"><strong>Attached Files:</strong><ul class="file-list">';
 
@@ -103,13 +109,12 @@ include("dbcon.php");
       mysqli_query($conn, "INSERT INTO attachments (Send_id, File_name, File_path) VALUES ('$send_id', '$file_name', '$file_path')");
 
       $biblo = $row['Bibliographic_details'];
-      $body .= '<ul><li>' . $biblo . '</li></ul>';
+      $body .= "<p> $biblo</p>";
 
       echo "<li>$file_name</li>";
     }
 
     $entry_ids_str = implode(',', $sent_entry_ids);
-
     echo '</ul></div>';
 
     $body .= '<br/>';
@@ -117,17 +122,27 @@ include("dbcon.php");
     $check = mysqli_query($conn, "SELECT * FROM entry WHERE order_id='$order_no' AND (Status='Pending' OR Status='Approached')");
     $check_count = mysqli_num_rows($check);
     if ($check_count > 0) {
-      $body .= '<p>The following remaining document(s) will be arranged soon:</p><ul>';
+      $body .= "<p>In the meantime, we are trying to acquire the other requested resources and we will deliver them to you soon.</p>";
+      $body .= "<p><strong>Details of the requested resource(s) pending:</strong></p><ul>";
+
       while ($row1 = mysqli_fetch_array($check)) {
-        $body .= '<li>' . $row1["Bibliographic_details"] . '</li>';
+          $body .= "<li> " . $row1["Bibliographic_details"] . "</li>";
       }
-      $body .= '</ul>';
+      $body .= "</ul>";
+    } else {
+      $body .= "<p>We hope these will be helpful for your current work.</p>";
     }
 
-    $body .= '<br/>Regards,<br/>Library Services<br/>Indian Institute of Technology Gandhinagar<br/>Palaj | Gandhinagar - 382355 | Gujarat | INDIA<br/>Tel: +91-079-2395 2099<br/>Email: <a href="mailto:libraryservices@iitgn.ac.in">libraryservices@iitgn.ac.in</a><br/>Website: <a href="http://www.iitgn.ac.in">http://www.iitgn.ac.in</a><br/>';
+    $body .= <<<HTML
+<p>If you require any further assistance in accessing additional materials, please feel free to reach out to us at <a href="mailto:libraryservices@iitgn.ac.in">libraryservices@iitgn.ac.in</a>.</p>
 
-    $body .= '<hr><p><strong>Copyright Guidelines:</strong></p>
-    <p style="color: red;">Kindly note that the attached documents are strictly for academic and research purposes only. They must not be shared electronically or hosted publicly.</p>';
+<hr>
+<p><strong>Copyright Guidelines:</strong></p>
+<p style="color: red;">
+Kindly note that the attached document(s) is/are being sent to you for your academic and research purposes only and must be given to the requester only. Under no circumstances should this/these paper(s) be circulated electronically or hosted on a public system. All these documents are copyrighted, hence we request your compliance.
+</p>
+HTML;
+
   }
   ?>
 
@@ -150,12 +165,12 @@ include("dbcon.php");
 
     <div class="mb-3">
       <label for="sub" class="form-label">Subject:</label>
-      <input type="text" class="form-control" id="sub" name="sub" value="Requested Papers" required>
+      <input type="text" class="form-control" id="sub" name="sub" value="Your Requested Research Document(s)" required>
     </div>
 
     <div class="mb-3">
       <label for="body" class="form-label">Body:</label>
-      <textarea name="Body" class="form-control" id="body" rows="15"><?= htmlspecialchars($body) ?></textarea>
+      <textarea name="Body" class="form-control" id="body" rows="15"><?= $body ?></textarea>
     </div>
 
     <input type="hidden" name="order_no" value="<?= htmlspecialchars($order_no) ?>">

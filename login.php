@@ -12,15 +12,12 @@
 </head>
 <body>
 
-<div class="pen-title">
-  <h2>
-    <img src="image/iitgn.png" style="width:75px; height:50px;">
-    DOCUMENT DELIVERY SERVICES
-  </h2>
-</div>
-
 <div class="form-module">
   <div class="form">
+    <div class="text-center mb-3">
+      <img src="image/iitgn_lib_logo.png" alt="IITGN Logo" style="width:400px; height:80px;">
+      <h4 class="mt-4 mb-0">DOCUMENT DELIVERY SERVICES (DDS)</h4>
+    </div>
     <h2 class="text-center">Login</h2>
     <form method="POST" action="">
       <input type="text" name="username" placeholder="Username" required />

@@ -17,16 +17,18 @@
   <!-- Choices.js for multiselect -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 
-  <!-- TinyMCE -->
-  <script src="https://cdn.tiny.cloud/1/qp8d4fz8gld9sydga5ch53yhhve7v7y2jpf0f4ko1zanlvk2/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  <!-- CKEditor 5 Classic (Production Build) -->
+  <script src="js/ckeditor.js"></script>
   <script>
-    tinymce.init({
-      selector: '#tinymce-body',
-      height: 500,
-      menubar: true,
-      plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table wordcount',
-      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat',
-      branding: false
+    document.addEventListener('DOMContentLoaded', function () {
+      ClassicEditor
+        .create(document.querySelector('#body'))
+        .then(editor => {
+          console.log('Editor ready', editor);
+        })
+        .catch(error => {
+          console.error('Editor init error:', error);
+        });
     });
   </script>
 
@@ -58,7 +60,13 @@
 include("dbcon.php");
 $body = '';
 if (isset($_POST['mail'])) {
-  $body = '<p>Dear Sir/Madam, <br/><br/>Could you please arrange to send the following article(s) if available in your collection.</p>The bibliographic details of the article(s) is/are given below:<br/>';
+$body = <<<HTML
+<p>Dear Sir/Madam,</p>
+<p>Greetings from Library, IIT Gandhinagar.</p>
+<p>One of our researchers urgently requires access to the following research paper for immediate reference in connection with ongoing work:</p>
+<p><strong>Details of the requested resource(s):</strong></p>
+HTML;
+
 
   $trun = mysqli_query($conn, "TRUNCATE TABLE send_instentry");
   if (!empty($_POST['send']) && is_array($_POST['send'])) {
@@ -68,10 +76,24 @@ if (isset($_POST['mail'])) {
         $req_date = $row['Req_date'];
         $send_entry_no = mysqli_query($conn, "INSERT INTO send_instentry (entry_id, req_date) VALUES ('$send_id', '$req_date')");
         $biblo = $row['Bibliographic_details'];
-        $body .= '<br/>' . $biblo . '<br/>';
+        $body .= '<p>● ' . $biblo . '</p>';
       }
     }
-    $body .= '<p>Regards,<br/>Library Services<br/>Indian Institute of Technology Gandhinagar<br/>Palaj | Gandhinagar - 382355 | Gujarat | INDIA<br/>Tel: +91-079-2395 2099<br/>Email: <a href="mailto:libraryservices@iitgn.ac.in">libraryservices@iitgn.ac.in</a><br/>Website: <a href="http://www.iitgn.ac.in">http://www.iitgn.ac.in</a></p>';
+    $body .= <<<HTML
+<p>As this document is not available in our library collection, we would be most grateful if you could kindly arrange to share a copy with us at your earliest convenience.</p>
+<p><strong>Please be assured that the paper will be provided solely to the requesting researcher and used strictly for academic and non-commercial purposes.</strong></p>
+<p>Your kind support in this matter will be deeply appreciated.<br/>
+Looking forward to your kind response.</p>
+
+<p>Regards,<br/>
+Library Services<br/>
+Indian Institute of Technology Gandhinagar<br/>
+Palaj | Gandhinagar - 382355 | Gujarat | INDIA<br/>
+Tel: +91-079-2395 2099<br/>
+Email: <a href="mailto:libraryservices@iitgn.ac.in">libraryservices@iitgn.ac.in</a><br/>
+Website: <a href="http://www.iitgn.ac.in">http://www.iitgn.ac.in</a></p>
+HTML;
+
 }
 ?>
 
@@ -138,10 +160,10 @@ if (isset($_POST['mail'])) {
       </div>
 
       <label for="sub">Subject:</label>
-      <input type="text" class="form-control" id="sub" name="sub" value="Request for Documents">
+      <input type="text" class="form-control" id="sub" name="sub" value="Request for Access to Subscribed Resources">
 
       <label for="Body">Body:</label>
-      <textarea name="Body" id="tinymce-body" class="form-control" rows="15"><?php echo $body; ?></textarea>
+      <textarea name="Body" id="body" class="form-control" rows="15"><?php echo $body; ?></textarea>
 
       <br/>
       <div class="text-center">
@@ -168,7 +190,7 @@ if (isset($_POST['mail'])) {
         placeholderValue: 'Select Institute(s)',
         maxItemCount: 100
       });
-    }
+    } 
     // For Cc
     new Choices('#Cc', {
       delimiter: ',',

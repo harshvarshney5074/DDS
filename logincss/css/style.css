@@ -1,10 +1,9 @@
 /* General Body Styling */
 body {
-  background-image: url('../../image/bg3.png'); /* added background image */
+  background-image: url('../../image/login_background.png'); /* added background image */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
-  min-height: 100vh;
   color: #666666;
   font-family: 'Roboto', 'RobotoDraft', sans-serif;
   font-size: 14px;
@@ -50,9 +49,9 @@ body {
 .form-module {
   position: relative;
   background: rgba(255, 255, 255, 0.95); /* semi-transparent for background readability */
-  max-width: 400px;
+  max-width: 580px;
   width: 100%;
-  margin: 60px auto;
+  margin: 10vh auto;
   padding: 30px;
   border-radius: 10px;
   border-top: 5px solid #33b5e5;
@@ -98,7 +97,12 @@ body {
 
 /* Form Content */
 .form-module .form {
-  padding: 40px;
+  padding: 30px;
+}
+
+.form-module .form h4 {
+  color: #33b5e5;
+  font-weight: bold;
 }
 
 .form-module .form h2 {
@@ -133,7 +137,7 @@ body {
   cursor: pointer;
   width: 100%;
   padding: 10px;
-  background-color: #0d6efd;
+  background-color: #33b5e5;
   color: #ffffff;
   border: none;
   border-radius: 5px;
@@ -141,7 +145,7 @@ body {
 }
 
 .form-module button:hover {
-  background-color: #0b5ed7;
+  background-color: #33b5e5;
 }
 
 /* Error Alert */
