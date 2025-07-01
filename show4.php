@@ -105,6 +105,9 @@ if (isset($_POST['send1'])) {
                 $today = date('Y-m-d');
                 $updateSentDate = "UPDATE entry SET Sent_date = '$today' WHERE Sr_no IN ($idsList)";
                 mysqli_query($conn, $updateSentDate);
+                $updateStatus = "UPDATE entry SET Status = 'Complete' WHERE Sr_no IN ($idsList)";
+                mysqli_query($conn, $updateStatus);
+
             }
         }
 
