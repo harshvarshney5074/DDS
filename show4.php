@@ -34,23 +34,35 @@ if (isset($_POST['send1'])) {
         $mail->addAddress($to);
 
         // Cc addresses
-        if (!empty($_POST['Cc'])) {
-            $ccs = explode(',', $_POST['Cc']);
-            foreach ($ccs as $cc) {
-                $cc = trim($cc);
-                if (filter_var($cc, FILTER_VALIDATE_EMAIL)) {
-                    $mail->addCC($cc);
+        // Cc addresses
+        // Fix CC
+        if (!empty($_POST['Cc']) && is_array($_POST['Cc'])) {
+            $ccInput = $_POST['Cc'];
+            $ccEmails = [];
+
+            foreach ($ccInput as $item) {
+                $parts = explode(',', $item);
+                foreach ($parts as $cc) {
+                    $cc = trim($cc);
+                    if (filter_var($cc, FILTER_VALIDATE_EMAIL)) {
+                        $mail->addCC($cc);
+                    }
                 }
             }
         }
 
-        // Bcc addresses
-        if (!empty($_POST['Bcc'])) {
-            $bccs = explode(',', $_POST['Bcc']);
-            foreach ($bccs as $bcc) {
-                $bcc = trim($bcc);
-                if (filter_var($bcc, FILTER_VALIDATE_EMAIL)) {
-                    $mail->addBCC($bcc);
+        // Fix BCC
+        if (!empty($_POST['Bcc']) && is_array($_POST['Bcc'])) {
+            $bccInput = $_POST['Bcc'];
+            $bccEmails = [];
+
+            foreach ($bccInput as $item) {
+                $parts = explode(',', $item);
+                foreach ($parts as $bcc) {
+                    $bcc = trim($bcc);
+                    if (filter_var($bcc, FILTER_VALIDATE_EMAIL)) {
+                        $mail->addBCC($bcc);
+                    }
                 }
             }
         }
@@ -72,6 +84,7 @@ if (isset($_POST['send1'])) {
                 error_log("Attachment file not found: $filePath");
             }
         }
+
 
         // Send the email
         $mail->send();

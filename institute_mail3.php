@@ -76,7 +76,7 @@ HTML;
         $req_date = $row['Req_date'];
         $send_entry_no = mysqli_query($conn, "INSERT INTO send_instentry (entry_id, req_date) VALUES ('$send_id', '$req_date')");
         $biblo = $row['Bibliographic_details'];
-        $body .= '<p>● ' . $biblo . '</p>';
+        $body .= '<p> ' . $biblo . '</p>';
       }
     }
     $body .= <<<HTML

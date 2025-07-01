@@ -15,6 +15,11 @@ include("dbcon.php");
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 
+  <!-- Choices.js for multiselect email -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+
   <!-- CKEditor 5 Classic -->
   <script src="js/ckeditor.js"></script>
   <script>
@@ -27,6 +32,24 @@ include("dbcon.php");
         .catch(error => {
           console.error('Editor init error:', error);
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      new Choices('#cc', {
+        delimiter: ',',
+        editItems: true,
+        removeItemButton: true,
+        duplicateItemsAllowed: false,
+        placeholderValue: 'Add Cc recipients'
+      });
+
+      new Choices('#bcc', {
+        delimiter: ',',
+        editItems: true,
+        removeItemButton: true,
+        duplicateItemsAllowed: false,
+        placeholderValue: 'Add Bcc recipients'
+      });
     });
   </script>
 
@@ -155,11 +178,11 @@ HTML;
     <div class="row mb-3">
       <div class="col">
         <label for="cc" class="form-label">Cc:</label>
-        <input type="text" class="form-control" id="cc" name="Cc">
+        <input type="text" class="form-control" id="cc" name="Cc[]" multiple>
       </div>
       <div class="col">
         <label for="bcc" class="form-label">Bcc:</label>
-        <input type="text" class="form-control" id="bcc" name="Bcc">
+        <input type="text" class="form-control" id="bcc" name="Bcc[]" multiple>
       </div>
     </div>
 

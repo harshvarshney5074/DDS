@@ -96,6 +96,10 @@ function sendEmail($email, $body, $Cc, $Bcc, $sub) {
         $mail->Body = $body;
 
         $mail->send();
+
+        $mail->clearAllRecipients();
+        $mail->clearCCs();
+        $mail->clearBCCs();
     } catch (Exception $e) {
         file_put_contents('mail_errors.log', date('Y-m-d H:i:s') . ' - ' . $email . ' - ' . $mail->ErrorInfo . "\n", FILE_APPEND);
     }
