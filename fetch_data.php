@@ -37,7 +37,19 @@ if (!empty($searchValue)) {
     if (!empty($searchColumn)) {
         $allowedCols = ['e.Sr_no', 'e.Req_date', 'p.Display_name', 'e.Category', 'e.Bibliographic_details', 'e.Journal_name', 'e.Document_type', 'e.Status'];
         if (in_array($searchColumn, $allowedCols)) {
-            $searchQuery .= " AND $searchColumn LIKE '%$searchValue%'";
+            if ($searchColumn === 'e.Req_date') {
+                // Convert dd-mm-yyyy to yyyy-mm-dd if applicable
+                $dateParts = explode('-', $searchValue);
+                if (count($dateParts) === 3) {
+                    $formattedDate = "{$dateParts[2]}-{$dateParts[1]}-{$dateParts[0]}";
+                    $searchQuery .= " AND DATE($searchColumn) = '$formattedDate'";
+                } else {
+                    // Fallback for partial input
+                    $searchQuery .= " AND DATE_FORMAT($searchColumn, '%d-%m-%Y') LIKE '%$searchValue%'";
+                }
+            } else {
+                $searchQuery .= " AND $searchColumn LIKE '%$searchValue%'";
+            }
         }
     }
     else{
@@ -103,7 +115,7 @@ while ($row = mysqli_fetch_assoc($dataResult)) {
     $subArray = [];
     $subArray[] = '<input type="checkbox" class="entry-checkbox" name="send[]" value="' . $row['Sr_no'] . '">';
     $subArray[] = $row['Sr_no'];
-    $subArray[] = $row['Req_date'];
+    $subArray[] = date('d-m-Y', strtotime($row['Req_date']));
     $subArray[] = $row['Display_name'] ?? '';
     $subArray[] = $row['Category'];
     $subArray[] = $row['Bibliographic_details'];

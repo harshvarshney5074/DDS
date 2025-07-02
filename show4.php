@@ -73,21 +73,45 @@ if (isset($_POST['send1'])) {
         $mail->Body = $_POST['Body'] ?? '';
 
         // Attachments from attachments table
+        // Step 1: Create a zip file
+        $zipFilePath = sys_get_temp_dir() . '/attachments_' . time() . '.zip';
+        $zip = new ZipArchive();
+
+        if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
+            throw new Exception("Failed to create zip file.");
+        }
+
+        $hasFiles = false;
+
         $result = mysqli_query($conn, "SELECT * FROM attachments");
         while ($row = mysqli_fetch_assoc($result)) {
             $filePath = $row['File_path'];
             $fileName = $row['File_name'];
 
             if (file_exists($filePath)) {
-                $mail->addAttachment($filePath, $fileName);
+                $zip->addFile($filePath, $fileName);  // Add file to zip
+                $hasFiles = true;
             } else {
                 error_log("Attachment file not found: $filePath");
             }
         }
 
+        $zip->close();
+
+        // Step 2: Attach zip file to email
+        if ($hasFiles && file_exists($zipFilePath)) {
+            $mail->addAttachment($zipFilePath, 'Requested_Documents.zip');
+        }
 
         // Send the email
         $mail->send();
+
+        // Delete zip file after sending
+        if (file_exists($zipFilePath)) {
+            unlink($zipFilePath);
+        }
+
+
 		if (isset($_POST['order_no'])) {
 			$order_id = intval($_POST['order_no']);
 			$update = mysqli_prepare($conn, "UPDATE orders SET sent = 1 WHERE order_id = ?");
